@@ -1,0 +1,260 @@
+<h2 id="lab-8-cmd-and-entrypoint">Lab 8: CMD and ENTRYPOINT</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>In this lab, we will learn about two important Dockerfile commands: <code class="highlighter-rouge">CMD</code> and <code class="highlighter-rouge">ENTRYPOINT</code>.</p>
+
+<p>Those commands allow us to set the default command to run in a container.</p>
+
+<hr />
+
+<h4 id="step-1-defining-a-default-command">Step 1: Defining a default command</h4>
+
+<p>When people run our container, we want to greet them with a nice hello message, and using a custom font.</p>
+
+<p>For that, we will execute: <code class="highlighter-rouge">figlet -f script hello</code></p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">-f script</code> tells figlet to use a fancy font.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">hello</code> is the message that we want it to display.</p>
+  </li>
+</ul>
+
+<p>We adding <code class="highlighter-rouge">CMD</code> to our Dockerfile. Our new Dockerfile will look like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN ["apt-get", "install", "figlet"]
+
+ CMD figlet -f script hello
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">CMD</code> defines a default command to run when none is given.</p>
+  </li>
+  <li>
+    <p>It can appear at any point in the file.</p>
+  </li>
+  <li>
+    <p>Each <code class="highlighter-rouge">CMD</code> will replace and override the previous one.</p>
+  </li>
+  <li>
+    <p>As a result, while you can have multiple <code class="highlighter-rouge">CMD</code> lines, it is useless.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-2-build-and-test-our-image">Step 2: Build and test our image</h4>
+
+<p>Let’s build it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet .
+ 
+ ...
+ 
+ Successfully built 042dff3b4a8d
+</code></pre>
+</div>
+
+<p>And run it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run figlet 
+
+ _          _   _
+| |        | | | |
+| |     _  | | | |  __
+|/ \   |/  |/  |/  /  \_
+|   |_/|__/|__/|__/\__/
+
+</code></pre>
+</div>
+
+<p>If we want to get a shell into our container (instead of running figlet), we just have to specify a different program to run:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it figlet bash 
+ root@7ac86a641116:/
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>We specified bash.</p>
+  </li>
+  <li>
+    <p>It replaced the value of <code class="highlighter-rouge">CMD</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-3-using-entrypoint">Step 3: Using ENTRYPOINT</h4>
+
+<p>We want to be able to specify a different message on the command line, while retaining figlet and some default parameters.</p>
+
+<p>In other words, we would like to be able to do this:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> # DO RUN THIS COMMAND NOW, IT ENDS IN AN ERROR !!!
+ $ docker run figlet salut
+           _
+          | |
+ ,   __,  | |       _|_
+/ \_/  |  |/  |   |  |
+ \/ \_/|_/|__/ \_/|_/|_/
+
+</code></pre>
+</div>
+
+<p>We will use the <code class="highlighter-rouge">ENTRYPOINT</code> verb in Dockerfile. Add<code class="highlighter-rouge"> ENTRYPOINT</code> to your Dockerfile. Our new Dockerfile will look like this:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN ["apt-get", "install", "figlet"]
+
+ ENTRYPOINT ["figlet", "-f", "script"]
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">ENTRYPOINT</code> defines a base command (and its parameters) for the container.</p>
+  </li>
+  <li>
+    <p>The command line arguments are appended to those parameters.</p>
+  </li>
+  <li>
+    <p>Like <code class="highlighter-rouge">CMD</code>, <code class="highlighter-rouge">ENTRYPOINT</code> can appear anywhere, and replaces the previous value.</p>
+  </li>
+</ul>
+
+<p>Why did we use JSON syntax for our <code class="highlighter-rouge">ENTRYPOINT</code>?</p>
+
+<ul>
+  <li>
+    <p>When <code class="highlighter-rouge">CMD</code> or <code class="highlighter-rouge">ENTRYPOINT</code> use string syntax, they get wrapped in /bin/sh -c.</p>
+  </li>
+  <li>
+    <p>To avoid this wrapping, you must use JSON syntax.</p>
+  </li>
+</ul>
+
+<p>What if we used <code class="highlighter-rouge">ENTRYPOINT</code> with string syntax : <code class="highlighter-rouge">docker run figlet salut</code></p>
+
+<p>This would run the following command in the figlet image:<code class="highlighter-rouge">sh -c "figlet -f script" salut</code></p>
+
+<p>Build and test our image. Let’s build it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet .
+
+ ...
+
+ Successfully built 36f588918d73
+</code></pre>
+</div>
+<p>And run it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run figlet salut
+           _
+          | |
+ ,   __,  | |       _|_
+/ \_/  |  |/  |   |  |
+ \/ \_/|_/|__/ \_/|_/|_/
+
+</code></pre>
+</div>
+
+<p>Great success!</p>
+
+<hr />
+
+<h4 id="step-4-using-cmd-and-entrypoint-together">Step 4: Using CMD and ENTRYPOINT together</h4>
+
+<p>What if we want to define a default message for our container? Then we will use <code class="highlighter-rouge">ENTRYPOINT</code> and <code class="highlighter-rouge">CMD</code> together.</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">ENTRYPOINT</code> will define the base command for our container.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">CMD</code> will define the default parameter(s) for this command.</p>
+  </li>
+  <li>
+    <p>They <em>both</em> have to use JSON syntax.</p>
+  </li>
+</ul>
+
+<p>Our new Dockerfile will look like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN ["apt-get", "install", "figlet"]
+
+ ENTRYPOINT ["figlet", "-f", "script"]
+
+ CMD ["hello world"]
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">ENTRYPOINT</code> defines a base command (and its parameters) for the container.</p>
+  </li>
+  <li>
+    <p>If we don’t specify extra command-line arguments when starting the container, the value of <code class="highlighter-rouge">CMD</code> is appended.</p>
+  </li>
+  <li>
+    <p>Otherwise, our extra command-line arguments are used instead of <code class="highlighter-rouge">CMD</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-5-build-and-test-our-image">Step 5: Build and test our image</h4>
+
+<p>Let’s build it:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet .
+
+ ...
+
+ Successfully built 6e0b6a048a07
+</code></pre>
+</div>
+<p>And run it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker run figlet
+ _          _   _                             _
+| |        | | | |                           | |    |
+| |     _  | | | |  __             __   ,_   | |  __|
+|/ \   |/  |/  |/  /  \_  |  |  |_/  \_/  |  |/  /  |
+|   |_/|__/|__/|__/\__/    \/ \/  \__/    |_/|__/\_/|_/
+
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run figlet hola mundo 
+ _           _
+| |         | |                                      |
+| |     __  | |  __,     _  _  _           _  _    __|   __
+|/ \   /  \_|/  /  |    / |/ |/ |  |   |  / |/ |  /  |  /  \_
+|   |_/\__/ |__/\_/|_/    |  |  |_/ \_/|_/  |  |_/\_/|_/\__/
+
+</code></pre>
+</div>
+
+<p>What if we want to run a shell in our container?</p>
+
+<p>We cannot just do <code class="highlighter-rouge">docker run figlet bash</code> because that would just tell figlet to display the word “bash.”</p>
+
+<p>We use the –entrypoint parameter:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it --entrypoint bash figlet 
+ root@b3ad7919177f:/#
+</code></pre>
+</div>

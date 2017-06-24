@@ -1,0 +1,284 @@
+<h2 id="lab-3-background-containers">Lab 3: Background Containers</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>Our first containers were <em>interactive</em>.</p>
+
+<p>We will now see how to:</p>
+
+<ul>
+  <li>
+    <p>Run a non-interactive container.</p>
+  </li>
+  <li>
+    <p>Run a container in the background.</p>
+  </li>
+  <li>
+    <p>List running containers.</p>
+  </li>
+  <li>
+    <p>Check the logs of a container.</p>
+  </li>
+  <li>
+    <p>Stop a container.</p>
+  </li>
+  <li>
+    <p>List stopped containers.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-1-a-non-interactive-container">Step 1: A non-interactive container</h4>
+
+<p>We will run a small custom container, more about this containers will explain in lab 5.</p>
+
+<p>This container just displays the time every second.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run hcscompany/clock
+  ...
+ Fri Feb 20 00:28:53 UTC 
+ Fri Feb 20 00:28:54 UTC 
+ Fri Feb 20 00:28:55 UTC
+ ...
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>This container will run forever.</p>
+  </li>
+  <li>
+    <p>To stop it, press ^C.</p>
+  </li>
+  <li>
+    <p>Docker has automatically downloaded the image hcscompany/clock.</p>
+  </li>
+  <li>
+    <p>This image is a user image, created by hcscompany.</p>
+  </li>
+  <li>
+    <p>We will hear more about user images (and other types of images) later.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-2-run-a-container-in-the-background">Step 2: Run a container in the background</h4>
+
+<p>Containers can be started in the background, with the <code class="highlighter-rouge">-d</code> flag (daemon mode):</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -d hcscompany/clock 
+ 47d677dcfba4277c6cc68fcaa51f932b544cab1a187c853b7d0caf4e8debe5ad
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>We don’t see the output of the container.</p>
+  </li>
+  <li>
+    <p>But don’t worry: Docker collects that output and logs it!</p>
+  </li>
+  <li>
+    <p>Docker gives us the ID of the container.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-3-list-running-containers">Step 3: List running containers</h4>
+
+<p>How can we check that our container is still running?</p>
+
+<p>With <code class="highlighter-rouge">docker ps</code>, just like the UNIX ps command, lists running processes.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps
+  CONTAINER ID  IMAGE             ...  CREATED        STATUS        ...
+  47d677dcfba4  hcscompany/clock  ...  2 minutes ago  Up 2 minutes  ...
+</code></pre>
+</div>
+<p>Docker tells us:</p>
+
+<ul>
+  <li>
+    <p>The (truncated) ID of our container.</p>
+  </li>
+  <li>
+    <p>The image used to start the container.</p>
+  </li>
+  <li>
+    <p>That our container has been running (Up) for a couple of minutes.</p>
+  </li>
+  <li>
+    <p>Other information (COMMAND, PORTS, NAMES) that we will explain later.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-4-starting-more-containers">Step 4: Starting more containers</h4>
+
+<p>Let’s start two more containers.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -d hcscompany/clock 
+ 57ad9bdfc06bb4407c47220cf59ce21585dce9a1298d7a67488359aeaea8ae2a 
+ 
+ $ docker run -d hcscompany/clock 
+ 068cc994ffd0190bbe025ba74e4c0771a5d8f14734af772ddee8dc1aaf20567d
+</code></pre>
+</div>
+<p>Check that <code class="highlighter-rouge">docker ps</code> correctly reports all 3 containers.</p>
+
+<hr />
+
+<h4 id="step-5-two-useful-flags-for-docker-ps">Step 5: Two useful flags for <code class="highlighter-rouge">docker ps</code></h4>
+
+<p>To see only the last container that was started:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps -l
+ CONTAINER ID  IMAGE           ...  CREATED        STATUS        ...
+ 068cc994ffd0  hcscompany/clock  ...  2 minutes ago  Up 2 minutes  ...
+</code></pre>
+</div>
+<p>To see only the ID of containers:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps -q 
+ 068cc994ffd0 
+ 57ad9bdfc06b 
+ 47d677dcfba4
+</code></pre>
+</div>
+<p>Combine those flags to see only the ID of the last container started!</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps -lq 
+ 068cc994ffd0
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-6-view-the-logs-of-a-container">Step 6: View the logs of a container</h4>
+
+<p>We told you that Docker was logging the container output.</p>
+
+<p>Let’s see that now.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs 068
+ Fri Feb 20 00:39:52 UTC 
+ Fri Feb 20 00:39:53 UTC
+ ...
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>We specified a <em>prefix</em> of the full container ID.</p>
+  </li>
+  <li>
+    <p>You can, of course, specify the full ID.</p>
+  </li>
+  <li>
+    <p>The logs command will output the <em>entire</em> logs of the container. (Sometimes, that will be too much. Let’s see how to address that.)</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-7-view-only-the-tail-of-the-logs">Step 7: View only the tail of the logs</h4>
+
+<p>To avoid being spammed with eleventy pages of output, we can use the <code class="highlighter-rouge">--tail</code> option:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 3 068 
+ Fri Feb 20 00:55:35 UTC 
+ Fri Feb 20 00:55:36 UTC 
+ Fri Feb 20 00:55:37 UTC
+</code></pre>
+</div>
+<ul>
+  <li>The parameter is the number of lines that we want to see.</li>
+</ul>
+
+<hr />
+
+<h4 id="step-8-follow-the-logs-in-real-time">Step 8: Follow the logs in real time</h4>
+
+<p>Just like with the standard UNIX command <code class="highlighter-rouge">tail -f</code>, we can <code class="highlighter-rouge">follow</code> the logs of our container:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 1 --follow 068 
+ Fri Feb 20 00:57:12 UTC
+ Fri Feb 20 00:57:13 UTC
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>This will display the last line in the log file.</p>
+  </li>
+  <li>
+    <p>Then, it will continue to display the logs in real time.</p>
+  </li>
+  <li>
+    <p><strong>Use ^C to exit</strong>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-9-stop-our-container">Step 9: Stop our container</h4>
+
+<p>There are two ways we can terminate our detached container.</p>
+
+<ul>
+  <li>
+    <p>Killing it using the <code class="highlighter-rouge">docker kill</code> command.</p>
+  </li>
+  <li>
+    <p>Stopping it using the <code class="highlighter-rouge">docker stop</code> command.</p>
+  </li>
+</ul>
+
+<p>The first one stops the container immediately, by using the KILL signal.</p>
+
+<p>The second one is more graceful. It sends a TERM signal, and after 10 seconds, if the container has not stopped, it sends KILL.</p>
+
+<p>Reminder: the KILL signal cannot be intercepted, and will forcibly terminate the container.</p>
+
+<p>Let’s stop one of those containers:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker stop 47d6 
+ 47d6
+</code></pre>
+</div>
+<p>This will take 10 seconds:</p>
+
+<ul>
+  <li>
+    <p>Docker sends the TERM signal;</p>
+  </li>
+  <li>
+    <p>the container doesn’t react to this signal (it’s a simple Shell script with no special signal handling);</p>
+  </li>
+  <li>
+    <p>10 seconds later, since the container is still running, Docker sends the KILL signal;</p>
+  </li>
+  <li>
+    <p>this terminates the container.</p>
+  </li>
+</ul>
+
+<p>Let’s be less patient with the two other containers and kill the remaining containers:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker kill 068 57ad 
+ 068
+ 57ad
+</code></pre>
+</div>
+<p>The stop and kill commands can take multiple container IDs.</p>
+
+<p>Those containers will be terminated immediately (without the 10 seconds delay). Let’s check that our containers don’t show up anymore:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-10-list-stopped-containers">Step 10: List stopped containers</h4>
+
+<p>We can also see stopped containers, with the <code class="highlighter-rouge">-a (--all)</code> option.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps -a
+  CONTAINER ID  IMAGE             ...  CREATED      STATUS
+  068cc994ffd0  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
+  57ad9bdfc06b  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
+  47d677dcfba4  hcscompany/clock  ...  23 min. ago  Exited (137) 3 min. ago
+  5c1dfd4d81f1  hcscompany/clock  ...  40 min. ago  Exited (0) 40 min. ago
+  b13c164401fb  ubuntu            ...  55 min. ago  Exited (130) 53 min. ago
+</code></pre>
+</div>

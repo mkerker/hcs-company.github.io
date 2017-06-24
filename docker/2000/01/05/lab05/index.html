@@ -1,0 +1,376 @@
+<h2 id="lab-5-understanding-docker-images">Lab 5: Understanding Docker Images</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>In this lab, we will explain:</p>
+
+<ul>
+  <li>
+    <p>What is an image.</p>
+  </li>
+  <li>
+    <p>What is a layer.</p>
+  </li>
+  <li>
+    <p>The various image namespaces.</p>
+  </li>
+  <li>
+    <p>How to search and download images.</p>
+  </li>
+  <li>
+    <p>Image tags and when to use them.</p>
+  </li>
+</ul>
+
+<h4 id="what-is-an-image">What is an image?</h4>
+
+<ul>
+  <li>
+    <p>An image is a collection of files + some meta data.
+(Technically: those files form the root filesystem of a container.)</p>
+  </li>
+  <li>
+    <p>Images are made of <em>layers</em>, conceptually stacked on top of each other.</p>
+  </li>
+  <li>
+    <p>Each layer can add, change, and remove files.</p>
+  </li>
+  <li>
+    <p>Images can share layers to optimize disk usage, transfer times, and memory use.</p>
+  </li>
+  <li>
+    <p>Example:</p>
+
+    <ul>
+      <li>
+        <p>CentOS</p>
+      </li>
+      <li>
+        <p>JRE</p>
+      </li>
+      <li>
+        <p>Tomcat</p>
+      </li>
+      <li>
+        <p>Dependencies</p>
+      </li>
+      <li>
+        <p>Application JAR</p>
+      </li>
+      <li>
+        <p>Configuration</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="differences-between-containers-and-images">Differences between containers and images</h4>
+
+<ul>
+  <li>
+    <p>An image is a read-only filesystem.</p>
+  </li>
+  <li>
+    <p>A container is an encapsulated set of processes running in a read-write copy of that filesystem.</p>
+  </li>
+  <li>
+    <p>To optimize container boot time, <em>copy-on-write</em> is used instead of regular copy.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">docker run</code> starts a container from a given image.</p>
+  </li>
+</ul>
+
+<p>If an image is read-only, how do we change it?</p>
+
+<ul>
+  <li>
+    <p>We don’t.</p>
+  </li>
+  <li>
+    <p>We create a new container from that image.</p>
+  </li>
+  <li>
+    <p>Then we make changes to that container.</p>
+  </li>
+  <li>
+    <p>When we are satisfied with those changes, we transform them into a new layer.</p>
+  </li>
+  <li>
+    <p>A new image is created by stacking the new layer on top of the old image.</p>
+  </li>
+</ul>
+
+<h4 id="creating-the-first-images">Creating the first images</h4>
+
+<p>There is a special empty image called scratch.</p>
+
+<ul>
+  <li>It allows to <em>build from scratch</em>.</li>
+</ul>
+
+<p>The docker import command loads a tarball into Docker.</p>
+
+<ul>
+  <li>
+    <p>The imported tarball becomes a standalone image.</p>
+  </li>
+  <li>
+    <p>That new image has a <strong>single layer</strong>.</p>
+  </li>
+</ul>
+
+<h4 id="creating-other-images">Creating other images</h4>
+
+<p>With <code class="highlighter-rouge">docker commit</code></p>
+
+<ul>
+  <li>
+    <p>Saves all the changes made to a container into a new layer.</p>
+  </li>
+  <li>
+    <p>Creates a new image (effectively a copy of the container).</p>
+  </li>
+</ul>
+
+<p>With <code class="highlighter-rouge">docker build</code></p>
+
+<ul>
+  <li>
+    <p>Performs a repeatable build sequence.</p>
+  </li>
+  <li>
+    <p>This is the preferred method!</p>
+  </li>
+</ul>
+
+<p>We will explain both methods in the next labs.</p>
+
+<h4 id="images-namespaces">Images namespaces</h4>
+
+<p>There are three namespaces:</p>
+
+<ul>
+  <li>
+    <p>Official images e.g. ubuntu, busybox …</p>
+  </li>
+  <li>
+    <p>User (and organizations) images e.g. hcscompany/clock</p>
+  </li>
+  <li>
+    <p>Self-hosted images e.g. registry.example.com:5000/my-private/image</p>
+  </li>
+</ul>
+
+<p>Let’s explain each of them.</p>
+
+<p><em>1 - Root namespace</em></p>
+
+<p>The root namespace is for official images. They are put there by ., but they are generally authored and maintained by third parties.</p>
+
+<p>Those images include:</p>
+
+<ul>
+  <li>
+    <p>Small, “swiss-army-knife” images like busybox.</p>
+  </li>
+  <li>
+    <p>Distro images to be used as bases for your builds, like ubuntu, fedora…</p>
+  </li>
+  <li>
+    <p>Ready-to-use components and services, like redis, postgresql… User namespace</p>
+  </li>
+</ul>
+
+<p><em>2 - The user namespace</em></p>
+
+<p>Holds images for Docker Hub users and organizations. For example: <code class="highlighter-rouge">hcscompany/clock</code></p>
+
+<p>The Docker Hub user is:</p>
+
+<p><code class="highlighter-rouge">hcscompany</code></p>
+
+<p>The image name is:</p>
+
+<p><code class="highlighter-rouge">clock</code></p>
+
+<p><em>3 - Self-Hosted namespace</em></p>
+
+<p>This namespace holds images which are not hosted on Docker Hub, but on third party registries.</p>
+
+<p>They contain the hostname (or IP address), and optionally the port, of the registry server.</p>
+
+<p>For example: <code class="highlighter-rouge">localhost:5000/wordpress</code></p>
+
+<ul>
+  <li>
+    <p>localhost:5000 is the host and port of the registry</p>
+  </li>
+  <li>
+    <p>wordpress is the name of the image</p>
+  </li>
+</ul>
+
+<h4 id="store-and-manage-images">Store and manage images</h4>
+
+<p>Images can be stored:</p>
+
+<ul>
+  <li>
+    <p>On your local Docker host.</p>
+  </li>
+  <li>
+    <p>In a Docker registry.</p>
+  </li>
+</ul>
+
+<p>You can use the Docker client to download (pull) or upload (push) images.</p>
+
+<p>To be more accurate: you can use the Docker client to tell a Docker server to push and pull images to and from a registry.</p>
+
+<hr />
+
+<h4 id="step-1-showing-current-images">Step 1: Showing current images</h4>
+
+<p>Let’s look at what images are on our host now.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images
+REPOSITORY                                         TAG                 IMAGE ID            CREATED             SIZE
+node                                               latest              efe7b69d7b71        2 months ago        660 MB
+httpd                                              latest              6587355a8c4f        2 months ago        176 MB
+busybox                                            latest              7968321274dc        3 months ago        1.11 MB
+ubuntu                                             latest              104bec311bcd        3 months ago        129 MB
+hcscompany/clock                                   latest              12068b93616f        2 years ago         2.43 MB
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-2-searching-for-images">Step 2: Searching for images</h4>
+
+<p>We cannot list <em>all</em> images on a remote registry, but we can search for a specific keyword:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker search zookeeper
+NAME                          DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+jplock/zookeeper              Builds a docker image for Zookeeper versio...   159                  [OK]
+zookeeper                     Apache ZooKeeper is an open-source server ...   132                  [OK]
+mesoscloud/zookeeper          ZooKeeper                                       70                   [OK]
+digitalwonderland/zookeeper   Latest Zookeeper - clusterable                  12                   [OK]
+springxd/zookeeper            A Docker image that can run a ZooKeeper se...   6                    [OK]
+elevy/zookeeper               ZooKeeper configured to execute an ensembl...   6                    [OK]
+debezium/zookeeper            Zookeeper image required when running the ...   3                    [OK]
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>“Stars” indicate the popularity of the image.</p>
+  </li>
+  <li>
+    <p>“Official” images are those in the root namespace.</p>
+  </li>
+  <li>
+    <p>“Automated” images are built automatically by the Docker Hub.
+(This means that their build recipe is always available.)</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-3-downloading-images">Step 3: Downloading images</h4>
+
+<p>There are two ways to download images.</p>
+
+<ul>
+  <li>
+    <p>Explicitly, with <code class="highlighter-rouge">docker pull</code>.</p>
+  </li>
+  <li>
+    <p>Implicitly, when executing <code class="highlighter-rouge">docker run</code> and the image is not found locally.</p>
+  </li>
+</ul>
+
+<p>Let’s pull an image:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker pull debian:jessie
+jessie: Pulling from library/debian
+6d827a3ef358: Pull complete
+Digest: sha256:72f784399fd2719b4cb4e16ef8e369a39dc67f53d978cd3e2e7bf4e502c7b793
+Status: Downloaded newer image for debian:jessie
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>As seen previously, images are made up of layers.</p>
+  </li>
+  <li>
+    <p>Docker has downloaded all the necessary layers.</p>
+  </li>
+  <li>
+    <p>In this example: <strong>:jessie</strong> indicates which exact version of Debian we would like. It is a <em>version tag</em>.</p>
+  </li>
+</ul>
+
+<h4 id="image-and-tags">Image and tags</h4>
+
+<ul>
+  <li>
+    <p>Images can have tags.</p>
+  </li>
+  <li>
+    <p>Tags define image versions or variants.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">docker pull ubuntu</code> will refer to <code class="highlighter-rouge">ubuntu:latest</code>.</p>
+  </li>
+  <li>
+    <p>The <code class="highlighter-rouge">:latest</code> tag is generally updated often.</p>
+  </li>
+</ul>
+
+<p>Don’t specify tags:</p>
+
+<ul>
+  <li>
+    <p>When doing rapid testing and prototyping.</p>
+  </li>
+  <li>
+    <p>When experimenting.</p>
+  </li>
+  <li>
+    <p>When you want the latest version.</p>
+  </li>
+</ul>
+
+<p>Do specify tags:</p>
+
+<ul>
+  <li>
+    <p>When recording a procedure into a script.</p>
+  </li>
+  <li>
+    <p>When going to production.</p>
+  </li>
+  <li>
+    <p>To ensure that the same version will be used everywhere.</p>
+  </li>
+  <li>
+    <p>To ensure repeatability later.</p>
+  </li>
+</ul>
+
+<p>In the next lab we tag an image.</p>
+
+<h4 id="section-summary">Section summary</h4>
+
+<p>We’ve learned how to:</p>
+
+<ul>
+  <li>
+    <p>Understand images and layers.</p>
+  </li>
+  <li>
+    <p>Understand Docker image namespacing.</p>
+  </li>
+  <li>
+    <p>Search and download images.</p>
+  </li>
+</ul>

@@ -1,0 +1,110 @@
+<h2 id="lab-9-copying-files-during-the-build">Lab 9: Copying files during the build</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>So far, we have installed things in our container images by downloading packages. We can also copy files from the <em>build context</em> to the container that we are building.</p>
+
+<p>Remember: the <em>build context</em> is the directory containing the Dockerfile. In this chapter, we will learn a new Dockerfile keyword: <code class="highlighter-rouge">COPY</code></p>
+
+<hr />
+
+<h4 id="step-1-build-some-c-code">Step 1: Build some C code</h4>
+
+<p>We want to build a container that compiles a basic “Hello world” program in C. Here is the program, <code class="highlighter-rouge">hello.c</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> int main () 
+ { puts("Hello, world!"); return 0;
+ }
+</code></pre>
+</div>
+
+<p>Let’s first create a new directory for examle <code class="highlighter-rouge">hello</code> and than download this file in there.</p>
+
+<p>(hint: <code class="highlighter-rouge">wget hcs-company.github.io/docker/hello.c</code>)</p>
+
+<hr />
+
+<h4 id="step-2-write-the-dockerfile">Step 2: Write the Dockerfile.</h4>
+
+<p>On Debian and Ubuntu, the package build-essential will get us a compiler.</p>
+
+<p>When installing it, don’t forget to specify the <code class="highlighter-rouge">-y</code> flag, otherwise the build will fail (since the build cannot be interactive).</p>
+
+<p>Then we will use <code class="highlighter-rouge">COPY</code> to place the source file into the container.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN apt-get install -y build-essential
+
+ COPY hello.c /
+
+ RUN make hello
+
+ CMD /hello
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-3-create-this-dockerfile">Step 3: Create this Dockerfile.</h4>
+
+<p>Testing our C program</p>
+
+<ul>
+  <li>
+    <p>Create hello.c and Dockerfile in the same direcotry.</p>
+  </li>
+  <li>
+    <p>Run <code class="highlighter-rouge">docker build -t hello .</code> in this directory. This may give a warning.</p>
+  </li>
+  <li>
+    <p>Run <code class="highlighter-rouge">docker run hello </code>, you should see Hello, world!.</p>
+  </li>
+</ul>
+
+<p>Success!</p>
+
+<hr />
+
+<h4 id="step-4-copy-and-the-build-cache">Step 4: <code class="highlighter-rouge">COPY</code> and the build cache</h4>
+
+<ul>
+  <li>
+    <p>Run the build again.</p>
+  </li>
+  <li>
+    <p>Now, modify hello.c and run the build again.</p>
+  </li>
+  <li>
+    <p>Docker can cache steps involving COPY.</p>
+  </li>
+  <li>
+    <p>Those steps will not be executed again if the files haven’t been changed.</p>
+  </li>
+</ul>
+
+<p><strong>Details:</strong></p>
+
+<ul>
+  <li>
+    <p>You can <code class="highlighter-rouge">COPY</code> whole directories recursively.</p>
+  </li>
+  <li>
+    <p>Older Dockerfiles also have the <code class="highlighter-rouge">ADD</code> instruction. It is similar but can automatically extract archives.</p>
+  </li>
+  <li>
+    <p>If we really wanted to compile C code in a compiler, we would:</p>
+
+    <ul>
+      <li>
+        <p>Place it in a different directory, with the <code class="highlighter-rouge">WORKDIR</code> instruction.</p>
+      </li>
+      <li>
+        <p>Even better, use the gcc official image.</p>
+      </li>
+    </ul>
+  </li>
+</ul>

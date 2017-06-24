@@ -176,7 +176,7 @@
 
 <h4 id="step-3-run-it">Step 3: Run it</h4>
 
-<p>Open a command-line terminal <em>(for Windows try PowerShell or install <a href="https://cygwin.com/install.html">Cygwin</a>)</em> and try out some Docker commands. Or if you use play-with-docker press +ADD NEW INSTANCE.</p>
+<p>Open a command-line terminal <em>(for Windows try PowerShell or even better install <a href="https://cygwin.com/install.html">Cygwin</a>)</em> and try out some Docker commands. Or if you use play-with-docker press +ADD NEW INSTANCE.</p>
 
 <ul>
   <li>Run <code class="highlighter-rouge">docker version</code> to check that you have the latest release installed.</li>
@@ -314,6 +314,9 @@ For more examples and ideas, visit:
 
 <p>In your Docker environment, just run the following command:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker run busybox echo hello world
+
+...
+
 hello world
 </code></pre>
 </div>
@@ -321,13 +324,16 @@ hello world
 
 <ul>
   <li>
-    <p>We used one of the smallest, simplest images available: busybox.</p>
+    <p>We used one of the smallest, simplest linux images available: busybox.</p>
   </li>
   <li>
-    <p><code class="highlighter-rouge">busybox</code> is typically used in embedded systems (phones, routers…).</p>
+    <p>Busybox combines tiny versions of many common UNIX utilities into a single small executable.</p>
   </li>
   <li>
-    <p>We ran a single process and echo’ed hello world.</p>
+    <p>Busybox is typically used in embedded systems (phones, routers…).</p>
+  </li>
+  <li>
+    <p>We ran a single process and echo’ed <code class="highlighter-rouge">hello world</code>.</p>
   </li>
 </ul>
 
@@ -357,7 +363,8 @@ hello world
   </li>
 </ul>
 
-<p>Let’s do something in our container. Try to run figlet in our container.</p>
+<p>Let’s do something in our container. Try to run figlet in our container. Figlet is a funny program that changes letters into ASCI characters.</p>
+
 <div class="highlighter-rouge"><pre class="highlight"><code>root@04c0bb0a6c07:/# figlet hello
 bash: figlet: command not found
 </code></pre>
@@ -366,7 +373,7 @@ bash: figlet: command not found
 
 <p><strong>An observation</strong></p>
 
-<p>Let’s check how many packages are installed here.</p>
+<p>Let’s check how many packages are installed here (number of packages may be different).</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>root@04c0bb0a6c07:/# dpkg -l | wc -l 
 103
 </code></pre>
@@ -383,14 +390,18 @@ bash: figlet: command not found
   </li>
 </ul>
 
-<p>We want figlet, so let’s install it:</p>
+<p>We want figlet, so let’s update Ubuntu…</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>root@04c0bb0a6c07:/# apt-get update
 ...
 
 Fetched 1514 kB in 14s (103 kB/s) 
 Reading package lists... Done
+</code></pre>
+</div>
 
-root@04c0bb0a6c07:/# apt-get install figlet
+<p>and install it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>root@04c0bb0a6c07:/# apt-get install figlet
 Reading package lists... Done
 
 ...
@@ -398,7 +409,7 @@ Reading package lists... Done
 update-alternatives: using /usr/bin/figlet-figlet to provide /usr/bin/figlet (figlet) in auto mode
 </code></pre>
 </div>
-<p>One minute later, figlet is installed!</p>
+<p>One minute later, figlet is installed! Let’s try figlet:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>root@04c0bb0a6c07:/# figlet hello
      _          _ _
     | |__   ___| | | ___
@@ -408,9 +419,9 @@ update-alternatives: using /usr/bin/figlet-figlet to provide /usr/bin/figlet (fi
 </code></pre>
 </div>
 
-<p>Just exit the shell, like you would usually do.</p>
+<p>Just exit the shell, like you would usually do.
+(E.g. with ^D or exit)</p>
 
-<p>(E.g. with ^D or exit)</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> root@04c0bb0a6c07:/# exit
 </code></pre>
 </div>
@@ -434,7 +445,7 @@ bash: figlet: command not found
     <p>We started a <em>brand new container</em>.</p>
   </li>
   <li>
-    <p>The basic Ubuntu image was used, and figlet is not here.</p>
+    <p>The basic Ubuntu image was used, and figlet is not here. This is called “Stateless” the state is not kept when the container is not there anymore.</p>
   </li>
 </ul>
 
@@ -449,6 +460,2034 @@ bash: figlet: command not found
     </div>
     </section>
     <!-- /.content-section-b -->
+    
+
+  
+    
+    <section id=Lab03>
+    <div class="content-section-a">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="lab-3-background-containers">Lab 3: Background Containers</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>Our first containers were <em>interactive</em>.</p>
+
+<p>We will now see how to:</p>
+
+<ul>
+  <li>
+    <p>Run a non-interactive container.</p>
+  </li>
+  <li>
+    <p>Run a container in the background.</p>
+  </li>
+  <li>
+    <p>List running containers.</p>
+  </li>
+  <li>
+    <p>Check the logs of a container.</p>
+  </li>
+  <li>
+    <p>Stop a container.</p>
+  </li>
+  <li>
+    <p>List stopped containers.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-1-a-non-interactive-container">Step 1: A non-interactive container</h4>
+
+<p>We will run a small custom container, more about this containers will explain in lab 5.</p>
+
+<p>This container just displays the time every second.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run hcscompany/clock
+  ...
+ Fri Feb 20 00:28:53 UTC 
+ Fri Feb 20 00:28:54 UTC 
+ Fri Feb 20 00:28:55 UTC
+ ...
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>This container will run forever.</p>
+  </li>
+  <li>
+    <p>To stop it, press ^C.</p>
+  </li>
+  <li>
+    <p>Docker has automatically downloaded the image hcscompany/clock.</p>
+  </li>
+  <li>
+    <p>This image is a user image, created by hcscompany.</p>
+  </li>
+  <li>
+    <p>We will hear more about user images (and other types of images) later.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-2-run-a-container-in-the-background">Step 2: Run a container in the background</h4>
+
+<p>Containers can be started in the background, with the <code class="highlighter-rouge">-d</code> flag (daemon mode):</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -d hcscompany/clock 
+ 47d677dcfba4277c6cc68fcaa51f932b544cab1a187c853b7d0caf4e8debe5ad
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>We don’t see the output of the container.</p>
+  </li>
+  <li>
+    <p>But don’t worry: Docker collects that output and logs it!</p>
+  </li>
+  <li>
+    <p>Docker gives us the ID of the container.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-3-list-running-containers">Step 3: List running containers</h4>
+
+<p>How can we check that our container is still running?</p>
+
+<p>With <code class="highlighter-rouge">docker ps</code>, just like the UNIX ps command, lists running processes.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps
+  CONTAINER ID  IMAGE             ...  CREATED        STATUS        ...
+  47d677dcfba4  hcscompany/clock  ...  2 minutes ago  Up 2 minutes  ...
+</code></pre>
+</div>
+<p>Docker tells us:</p>
+
+<ul>
+  <li>
+    <p>The (truncated) ID of our container.</p>
+  </li>
+  <li>
+    <p>The image used to start the container.</p>
+  </li>
+  <li>
+    <p>That our container has been running (Up) for a couple of minutes.</p>
+  </li>
+  <li>
+    <p>Other information (COMMAND, PORTS, NAMES) that we will explain later.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-4-starting-more-containers">Step 4: Starting more containers</h4>
+
+<p>Let’s start two more containers.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -d hcscompany/clock 
+ 57ad9bdfc06bb4407c47220cf59ce21585dce9a1298d7a67488359aeaea8ae2a 
+ 
+ $ docker run -d hcscompany/clock 
+ 068cc994ffd0190bbe025ba74e4c0771a5d8f14734af772ddee8dc1aaf20567d
+</code></pre>
+</div>
+<p>Check that <code class="highlighter-rouge">docker ps</code> correctly reports all 3 containers.</p>
+
+<hr />
+
+<h4 id="step-5-two-useful-flags-for-docker-ps">Step 5: Two useful flags for <code class="highlighter-rouge">docker ps</code></h4>
+
+<p>To see only the last container that was started:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps -l
+ CONTAINER ID  IMAGE           ...  CREATED        STATUS        ...
+ 068cc994ffd0  hcscompany/clock  ...  2 minutes ago  Up 2 minutes  ...
+</code></pre>
+</div>
+<p>To see only the ID of containers:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps -q 
+ 068cc994ffd0 
+ 57ad9bdfc06b 
+ 47d677dcfba4
+</code></pre>
+</div>
+<p>Combine those flags to see only the ID of the last container started!</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps -lq 
+ 068cc994ffd0
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-6-view-the-logs-of-a-container">Step 6: View the logs of a container</h4>
+
+<p>We told you that Docker was logging the container output.</p>
+
+<p>Let’s see that now.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs 068
+ Fri Feb 20 00:39:52 UTC 
+ Fri Feb 20 00:39:53 UTC
+ ...
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>We specified a <em>prefix</em> of the full container ID.</p>
+  </li>
+  <li>
+    <p>You can, of course, specify the full ID.</p>
+  </li>
+  <li>
+    <p>The logs command will output the <em>entire</em> logs of the container. (Sometimes, that will be too much. Let’s see how to address that.)</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-7-view-only-the-tail-of-the-logs">Step 7: View only the tail of the logs</h4>
+
+<p>To avoid being spammed with eleventy pages of output, we can use the <code class="highlighter-rouge">--tail</code> option:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 3 068 
+ Fri Feb 20 00:55:35 UTC 
+ Fri Feb 20 00:55:36 UTC 
+ Fri Feb 20 00:55:37 UTC
+</code></pre>
+</div>
+<ul>
+  <li>The parameter is the number of lines that we want to see.</li>
+</ul>
+
+<hr />
+
+<h4 id="step-8-follow-the-logs-in-real-time">Step 8: Follow the logs in real time</h4>
+
+<p>Just like with the standard UNIX command <code class="highlighter-rouge">tail -f</code>, we can <code class="highlighter-rouge">follow</code> the logs of our container:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 1 --follow 068 
+ Fri Feb 20 00:57:12 UTC
+ Fri Feb 20 00:57:13 UTC
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>This will display the last line in the log file.</p>
+  </li>
+  <li>
+    <p>Then, it will continue to display the logs in real time.</p>
+  </li>
+  <li>
+    <p><strong>Use ^C to exit</strong>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-9-stop-our-container">Step 9: Stop our container</h4>
+
+<p>There are two ways we can terminate our detached container.</p>
+
+<ul>
+  <li>
+    <p>Killing it using the <code class="highlighter-rouge">docker kill</code> command.</p>
+  </li>
+  <li>
+    <p>Stopping it using the <code class="highlighter-rouge">docker stop</code> command.</p>
+  </li>
+</ul>
+
+<p>The first one stops the container immediately, by using the KILL signal.</p>
+
+<p>The second one is more graceful. It sends a TERM signal, and after 10 seconds, if the container has not stopped, it sends KILL.</p>
+
+<p>Reminder: the KILL signal cannot be intercepted, and will forcibly terminate the container.</p>
+
+<p>Let’s stop one of those containers:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker stop 47d6 
+ 47d6
+</code></pre>
+</div>
+<p>This will take 10 seconds:</p>
+
+<ul>
+  <li>
+    <p>Docker sends the TERM signal;</p>
+  </li>
+  <li>
+    <p>the container doesn’t react to this signal (it’s a simple Shell script with no special signal handling);</p>
+  </li>
+  <li>
+    <p>10 seconds later, since the container is still running, Docker sends the KILL signal;</p>
+  </li>
+  <li>
+    <p>this terminates the container.</p>
+  </li>
+</ul>
+
+<p>Let’s be less patient with the two other containers and kill the remaining containers:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker kill 068 57ad 
+ 068
+ 57ad
+</code></pre>
+</div>
+<p>The stop and kill commands can take multiple container IDs.</p>
+
+<p>Those containers will be terminated immediately (without the 10 seconds delay). Let’s check that our containers don’t show up anymore:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-10-list-stopped-containers">Step 10: List stopped containers</h4>
+
+<p>We can also see stopped containers, with the <code class="highlighter-rouge">-a (--all)</code> option.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps -a
+  CONTAINER ID  IMAGE             ...  CREATED      STATUS
+  068cc994ffd0  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
+  57ad9bdfc06b  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
+  47d677dcfba4  hcscompany/clock  ...  23 min. ago  Exited (137) 3 min. ago
+  5c1dfd4d81f1  hcscompany/clock  ...  40 min. ago  Exited (0) 40 min. ago
+  b13c164401fb  ubuntu            ...  55 min. ago  Exited (130) 53 min. ago
+</code></pre>
+</div>
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-a -->
+    
+
+  
+    
+
+    <section id=Lab04>
+    <div class="content-section-b">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="lab-4-restarting-and-attaching-to-containers">Lab 4: Restarting and Attaching to Containers</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>We have started containers in the foreground, and in the background. In this lab, we will see how to:</p>
+
+<ul>
+  <li>
+    <p>Put a container in the background.</p>
+  </li>
+  <li>
+    <p>Attach to a background container to bring it to the foreground.</p>
+  </li>
+  <li>
+    <p>Restart a stopped container.</p>
+  </li>
+</ul>
+
+<h4 id="background-and-foreground">Background and foreground</h4>
+
+<p>The distinction between foreground and background containers is arbitrary. From Docker’s point of view, all containers are the same.</p>
+
+<p>All containers run the same way, whether there is a client attached to them or not. It is always possible to detach from a container, and to reattach to a container.</p>
+
+<p>Analogy: attaching to a container is like plugging a keyboard and screen to a physical server.</p>
+
+<hr />
+
+<h4 id="step-1-detaching-from-a-container">Step 1: Detaching from a container</h4>
+
+<ul>
+  <li>
+    <p>If you have started an <em>interactive</em> container (with option <code class="highlighter-rouge">-it</code>), you can detach from it.</p>
+  </li>
+  <li>
+    <p>The “detach” sequence is ^P^Q (ctrl-P ctrl-Q)</p>
+  </li>
+  <li>
+    <p>Otherwise you can detach by killing the Docker client.</p>
+  </li>
+</ul>
+
+<p>(But not by hitting ^C, as this would deliver SIGINT to the container.)</p>
+
+<p>What does <code class="highlighter-rouge">-it</code> stand for?</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">-t</code> means “allocate a terminal.”</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">-i</code> means “connect stdin to the terminal.”</p>
+  </li>
+</ul>
+
+<h4 id="specifying-a-custom-detach-sequence">Specifying a custom detach sequence</h4>
+
+<ul>
+  <li>
+    <p>You don’t like ^P^Q? No problem!</p>
+  </li>
+  <li>
+    <p>You can change the sequence with <code class="highlighter-rouge">docker run --detach-keys</code>.</p>
+  </li>
+  <li>
+    <p>This can also be passed as a global option to the engine.</p>
+  </li>
+</ul>
+
+<p>Start a container with a custom detach command:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it --detach-keys ctrl-x,x hcscompany/clock
+</code></pre>
+</div>
+<p>Detach by hitting ^X x. (This is ctrl-x then x, not ctrl-x twice!)</p>
+
+<p>Check that our container is still running:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps -l
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-2-attaching-to-a-container">Step 2: Attaching to a container</h4>
+
+<p>You can attach to a container by <code class="highlighter-rouge">docker attach &lt;containerID&gt;</code></p>
+
+<ul>
+  <li>
+    <p>The container must be running.</p>
+  </li>
+  <li>
+    <p>There <em>can</em> be multiple clients attached to the same container.</p>
+  </li>
+  <li>
+    <p>If you don’t specify <code class="highlighter-rouge">--detach-keys</code> when attaching, it defaults back to ^P^Q.</p>
+  </li>
+</ul>
+
+<p>Try it on our previous container:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker attach $(docker ps -lq)
+</code></pre>
+</div>
+<p>Check that ^X x doesn’t work, but ^P ^Q does. Let’s try ^P ^Q for now.</p>
+
+<h4 id="detaching-from-non-interactive-containers">Detaching from non-interactive containers</h4>
+
+<ul>
+  <li>
+    <p><strong>Warning:</strong> if the container was started without <code class="highlighter-rouge">-it</code>…</p>
+
+    <ul>
+      <li>
+        <p>You won’t be able to detach with ^P^Q.</p>
+      </li>
+      <li>
+        <p>If you hit ^C, the signal will be proxied to the container.</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Remember: you can always detach by killing the Docker client.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-3-checking-container-output">Step 3: Checking container output</h4>
+
+<p>Use <code class="highlighter-rouge">docker attach</code> if you intend to send input to the container.</p>
+
+<p>If you just want to see the output of a container, use <code class="highlighter-rouge">docker logs  --tail 1 --follow &lt;containerID&gt;</code>, we used this in our previous lab.</p>
+
+<hr />
+
+<h4 id="step-4-restarting-a-container">Step 4: Restarting a container</h4>
+
+<p>Use <code class="highlighter-rouge">docker attach</code> again and <strong>stop</strong> the container with ^C.</p>
+
+<p>When a container has exited, it is in stopped state.
+It can then be restarted with the start command:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker start &lt;yourContainerID&gt;
+</code></pre>
+</div>
+
+<p>The container will be restarted using the same options you launched it with.</p>
+
+<p>You can re-attach to it if you want to interact with it:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker attach &lt;yourContainerID&gt;
+</code></pre>
+</div>
+<p>Use <code class="highlighter-rouge">docker ps -a</code> to identify the container ID of a previous hcscompany/clock container, and try those commands.</p>
+
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-b -->
+    
+
+  
+    
+    <section id=Lab05>
+    <div class="content-section-a">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="lab-5-understanding-docker-images">Lab 5: Understanding Docker Images</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>In this lab, we will explain:</p>
+
+<ul>
+  <li>
+    <p>What is an image.</p>
+  </li>
+  <li>
+    <p>What is a layer.</p>
+  </li>
+  <li>
+    <p>The various image namespaces.</p>
+  </li>
+  <li>
+    <p>How to search and download images.</p>
+  </li>
+  <li>
+    <p>Image tags and when to use them.</p>
+  </li>
+</ul>
+
+<h4 id="what-is-an-image">What is an image?</h4>
+
+<ul>
+  <li>
+    <p>An image is a collection of files + some meta data.
+(Technically: those files form the root filesystem of a container.)</p>
+  </li>
+  <li>
+    <p>Images are made of <em>layers</em>, conceptually stacked on top of each other.</p>
+  </li>
+  <li>
+    <p>Each layer can add, change, and remove files.</p>
+  </li>
+  <li>
+    <p>Images can share layers to optimize disk usage, transfer times, and memory use.</p>
+  </li>
+  <li>
+    <p>Example:</p>
+
+    <ul>
+      <li>
+        <p>CentOS</p>
+      </li>
+      <li>
+        <p>JRE</p>
+      </li>
+      <li>
+        <p>Tomcat</p>
+      </li>
+      <li>
+        <p>Dependencies</p>
+      </li>
+      <li>
+        <p>Application JAR</p>
+      </li>
+      <li>
+        <p>Configuration</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="differences-between-containers-and-images">Differences between containers and images</h4>
+
+<ul>
+  <li>
+    <p>An image is a read-only filesystem.</p>
+  </li>
+  <li>
+    <p>A container is an encapsulated set of processes running in a read-write copy of that filesystem.</p>
+  </li>
+  <li>
+    <p>To optimize container boot time, <em>copy-on-write</em> is used instead of regular copy.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">docker run</code> starts a container from a given image.</p>
+  </li>
+</ul>
+
+<p>If an image is read-only, how do we change it?</p>
+
+<ul>
+  <li>
+    <p>We don’t.</p>
+  </li>
+  <li>
+    <p>We create a new container from that image.</p>
+  </li>
+  <li>
+    <p>Then we make changes to that container.</p>
+  </li>
+  <li>
+    <p>When we are satisfied with those changes, we transform them into a new layer.</p>
+  </li>
+  <li>
+    <p>A new image is created by stacking the new layer on top of the old image.</p>
+  </li>
+</ul>
+
+<h4 id="creating-the-first-images">Creating the first images</h4>
+
+<p>There is a special empty image called scratch.</p>
+
+<ul>
+  <li>It allows to <em>build from scratch</em>.</li>
+</ul>
+
+<p>The docker import command loads a tarball into Docker.</p>
+
+<ul>
+  <li>
+    <p>The imported tarball becomes a standalone image.</p>
+  </li>
+  <li>
+    <p>That new image has a <strong>single layer</strong>.</p>
+  </li>
+</ul>
+
+<h4 id="creating-other-images">Creating other images</h4>
+
+<p>With <code class="highlighter-rouge">docker commit</code></p>
+
+<ul>
+  <li>
+    <p>Saves all the changes made to a container into a new layer.</p>
+  </li>
+  <li>
+    <p>Creates a new image (effectively a copy of the container).</p>
+  </li>
+</ul>
+
+<p>With <code class="highlighter-rouge">docker build</code></p>
+
+<ul>
+  <li>
+    <p>Performs a repeatable build sequence.</p>
+  </li>
+  <li>
+    <p>This is the preferred method!</p>
+  </li>
+</ul>
+
+<p>We will explain both methods in the next labs.</p>
+
+<h4 id="images-namespaces">Images namespaces</h4>
+
+<p>There are three namespaces:</p>
+
+<ul>
+  <li>
+    <p>Official images e.g. ubuntu, busybox …</p>
+  </li>
+  <li>
+    <p>User (and organizations) images e.g. hcscompany/clock</p>
+  </li>
+  <li>
+    <p>Self-hosted images e.g. registry.example.com:5000/my-private/image</p>
+  </li>
+</ul>
+
+<p>Let’s explain each of them.</p>
+
+<p><em>1 - Root namespace</em></p>
+
+<p>The root namespace is for official images. They are put there by ., but they are generally authored and maintained by third parties.</p>
+
+<p>Those images include:</p>
+
+<ul>
+  <li>
+    <p>Small, “swiss-army-knife” images like busybox.</p>
+  </li>
+  <li>
+    <p>Distro images to be used as bases for your builds, like ubuntu, fedora…</p>
+  </li>
+  <li>
+    <p>Ready-to-use components and services, like redis, postgresql… User namespace</p>
+  </li>
+</ul>
+
+<p><em>2 - The user namespace</em></p>
+
+<p>Holds images for Docker Hub users and organizations. For example: <code class="highlighter-rouge">hcscompany/clock</code></p>
+
+<p>The Docker Hub user is:</p>
+
+<p><code class="highlighter-rouge">hcscompany</code></p>
+
+<p>The image name is:</p>
+
+<p><code class="highlighter-rouge">clock</code></p>
+
+<p><em>3 - Self-Hosted namespace</em></p>
+
+<p>This namespace holds images which are not hosted on Docker Hub, but on third party registries.</p>
+
+<p>They contain the hostname (or IP address), and optionally the port, of the registry server.</p>
+
+<p>For example: <code class="highlighter-rouge">localhost:5000/wordpress</code></p>
+
+<ul>
+  <li>
+    <p>localhost:5000 is the host and port of the registry</p>
+  </li>
+  <li>
+    <p>wordpress is the name of the image</p>
+  </li>
+</ul>
+
+<h4 id="store-and-manage-images">Store and manage images</h4>
+
+<p>Images can be stored:</p>
+
+<ul>
+  <li>
+    <p>On your local Docker host.</p>
+  </li>
+  <li>
+    <p>In a Docker registry.</p>
+  </li>
+</ul>
+
+<p>You can use the Docker client to download (pull) or upload (push) images.</p>
+
+<p>To be more accurate: you can use the Docker client to tell a Docker server to push and pull images to and from a registry.</p>
+
+<hr />
+
+<h4 id="step-1-showing-current-images">Step 1: Showing current images</h4>
+
+<p>Let’s look at what images are on our host now.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images
+REPOSITORY                                         TAG                 IMAGE ID            CREATED             SIZE
+node                                               latest              efe7b69d7b71        2 months ago        660 MB
+httpd                                              latest              6587355a8c4f        2 months ago        176 MB
+busybox                                            latest              7968321274dc        3 months ago        1.11 MB
+ubuntu                                             latest              104bec311bcd        3 months ago        129 MB
+hcscompany/clock                                   latest              12068b93616f        2 years ago         2.43 MB
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-2-searching-for-images">Step 2: Searching for images</h4>
+
+<p>We cannot list <em>all</em> images on a remote registry, but we can search for a specific keyword:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker search zookeeper
+NAME                          DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+jplock/zookeeper              Builds a docker image for Zookeeper versio...   159                  [OK]
+zookeeper                     Apache ZooKeeper is an open-source server ...   132                  [OK]
+mesoscloud/zookeeper          ZooKeeper                                       70                   [OK]
+digitalwonderland/zookeeper   Latest Zookeeper - clusterable                  12                   [OK]
+springxd/zookeeper            A Docker image that can run a ZooKeeper se...   6                    [OK]
+elevy/zookeeper               ZooKeeper configured to execute an ensembl...   6                    [OK]
+debezium/zookeeper            Zookeeper image required when running the ...   3                    [OK]
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>“Stars” indicate the popularity of the image.</p>
+  </li>
+  <li>
+    <p>“Official” images are those in the root namespace.</p>
+  </li>
+  <li>
+    <p>“Automated” images are built automatically by the Docker Hub.
+(This means that their build recipe is always available.)</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-3-downloading-images">Step 3: Downloading images</h4>
+
+<p>There are two ways to download images.</p>
+
+<ul>
+  <li>
+    <p>Explicitly, with <code class="highlighter-rouge">docker pull</code>.</p>
+  </li>
+  <li>
+    <p>Implicitly, when executing <code class="highlighter-rouge">docker run</code> and the image is not found locally.</p>
+  </li>
+</ul>
+
+<p>Let’s pull an image:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker pull debian:jessie
+jessie: Pulling from library/debian
+6d827a3ef358: Pull complete
+Digest: sha256:72f784399fd2719b4cb4e16ef8e369a39dc67f53d978cd3e2e7bf4e502c7b793
+Status: Downloaded newer image for debian:jessie
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>As seen previously, images are made up of layers.</p>
+  </li>
+  <li>
+    <p>Docker has downloaded all the necessary layers.</p>
+  </li>
+  <li>
+    <p>In this example: <strong>:jessie</strong> indicates which exact version of Debian we would like. It is a <em>version tag</em>.</p>
+  </li>
+</ul>
+
+<h4 id="image-and-tags">Image and tags</h4>
+
+<ul>
+  <li>
+    <p>Images can have tags.</p>
+  </li>
+  <li>
+    <p>Tags define image versions or variants.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">docker pull ubuntu</code> will refer to <code class="highlighter-rouge">ubuntu:latest</code>.</p>
+  </li>
+  <li>
+    <p>The <code class="highlighter-rouge">:latest</code> tag is generally updated often.</p>
+  </li>
+</ul>
+
+<p>Don’t specify tags:</p>
+
+<ul>
+  <li>
+    <p>When doing rapid testing and prototyping.</p>
+  </li>
+  <li>
+    <p>When experimenting.</p>
+  </li>
+  <li>
+    <p>When you want the latest version.</p>
+  </li>
+</ul>
+
+<p>Do specify tags:</p>
+
+<ul>
+  <li>
+    <p>When recording a procedure into a script.</p>
+  </li>
+  <li>
+    <p>When going to production.</p>
+  </li>
+  <li>
+    <p>To ensure that the same version will be used everywhere.</p>
+  </li>
+  <li>
+    <p>To ensure repeatability later.</p>
+  </li>
+</ul>
+
+<p>In the next lab we tag an image.</p>
+
+<h4 id="section-summary">Section summary</h4>
+
+<p>We’ve learned how to:</p>
+
+<ul>
+  <li>
+    <p>Understand images and layers.</p>
+  </li>
+  <li>
+    <p>Understand Docker image namespacing.</p>
+  </li>
+  <li>
+    <p>Search and download images.</p>
+  </li>
+</ul>
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-a -->
+    
+
+  
+    
+
+    <section id=Lab06>
+    <div class="content-section-b">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="lab-6-building-images-interactively">Lab 6: Building Images Interactively</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>In this lab, we will create our first container image.</p>
+
+<p>It will be a basic distribution image, but we will pre-install the package figlet.</p>
+
+<p>We will:</p>
+
+<ul>
+  <li>
+    <p>Create a container from a base image.</p>
+  </li>
+  <li>
+    <p>Install software manually in the container, and turn it into a new image.</p>
+  </li>
+  <li>
+    <p>Learn about new commands: docker commit, docker tag, and docker diff.</p>
+  </li>
+</ul>
+
+<p><strong>Building Images Interactively</strong></p>
+
+<p>As we have seen, the images on the Docker Hub are sometimes very basic. How do we want to construct our own images?</p>
+
+<p>As an example, we will build an image that has figlet.</p>
+
+<p>First, we will do it manually with docker commit.</p>
+
+<p>Then, in an upcoming lab, we will use a Dockerfile and docker build.</p>
+
+<p>Our base will be the ubuntu image.</p>
+
+<hr />
+
+<h4 id="step-1-create-a-new-container-and-make-some-changes">Step 1: Create a new container and make some changes</h4>
+
+<p>Start an Ubuntu container:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it ubuntu
+ root@&lt;yourContainerId&gt;:\#
+</code></pre>
+</div>
+<p>Run the command apt-get update to refresh the list of packages available to install.</p>
+
+<p>Then run the command apt-get install figlet to install the program we are interested in.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> root@&lt;yourContainerId&gt;:\# apt-get update &amp;&amp; apt-get install figlet
+
+ ...
+ 
+Unpacking figlet (2.2.5-2) ...
+Setting up figlet (2.2.5-2) ...
+update-alternatives: using /usr/bin/figlet-figlet to provide /usr/bin/figlet (figlet) in auto mode
+root@b7b80a21718c:/#
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-2-inspect-the-changes">Step 2: Inspect the changes</h4>
+
+<p><strong>Type</strong> <code class="highlighter-rouge">exit</code> at the container prompt to leave the interactive session.</p>
+
+<p>Now let’s run <code class="highlighter-rouge">docker diff</code> to see the difference between the base image and our container, in our case <yourContainerID> is b7b80a21718c, see prompt of our container `root@b7b80a21718c`</yourContainerID></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker diff &lt;yourContainerId&gt;
+C /etc
+C /etc/alternatives
+A /etc/alternatives/figlet
+A /etc/alternatives/figlet.6.gz
+C /root
+A /root/.bash_history
+C /tmp
+ ...
+</code></pre>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Symbol</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>A</td>
+      <td>A file or directory was added</td>
+    </tr>
+    <tr>
+      <td>D</td>
+      <td>A file or directory was deleted</td>
+    </tr>
+    <tr>
+      <td>C</td>
+      <td>A file or directory was changed</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Docker tracks filesystem changes, as explained before:</p>
+
+<ul>
+  <li>
+    <p>An image is read-only.</p>
+  </li>
+  <li>
+    <p>When we make changes, they happen in a copy of the image.</p>
+  </li>
+  <li>
+    <p>Docker can show the difference between the image, and its copy.</p>
+  </li>
+  <li>
+    <p>For performance, Docker uses copy-on-write systems.</p>
+  </li>
+</ul>
+
+<p>(i.e. starting a container based on a big image doesn’t incur a huge copy.)</p>
+
+<hr />
+
+<h4 id="step-3-commit-and-run-your-image">Step 3: Commit and run your image</h4>
+
+<p>The docker commit command will create a new layer with those changes, and a new image using this new layer.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker commit &lt;yourContainerId&gt; 
+ sha256:&lt;newImageId&gt;
+</code></pre>
+</div>
+<p>The output of the docker commit command will be the ID for your newly created image.</p>
+
+<p>We can run this image:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it &lt;newImageId&gt;
+ root@fcfb62f0bfde:/# figlet hello
+     _          _ _
+    | |__   ___| | | ___
+    |  _ \ / _ \ | |/ _ \
+    | | | |  __/ | | (_) |
+    |_| |_|\___|_|_|\___/
+</code></pre>
+</div>
+
+<p>after that <code class="highlighter-rouge">exit</code> the container.</p>
+
+<hr />
+
+<h4 id="step-4-tagging-images">Step 4: Tagging images</h4>
+
+<p>Referring to an image by its ID is not convenient. Let’s tag it instead. We can use the tag command:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker tag &lt;newImageId&gt; figlet
+</code></pre>
+</div>
+<p>But we can also specify the tag as an extra argument to commit:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker commit &lt;yourContainerId&gt; figlet
+</code></pre>
+</div>
+<p>And then run it using its tag:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it figlet
+</code></pre>
+</div>
+<p><strong>What’s next?</strong></p>
+
+<p>Manual process = bad.</p>
+
+<p>Automated process = good.</p>
+
+<p>In the next lab, we will learn how to automate the build process by writing a Dockerfile.</p>
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-b -->
+    
+
+  
+    
+    <section id=Lab07>
+    <div class="content-section-a">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="lab-7-building-images-with-a-dockerfile">Lab 7: Building Images With A Dockerfile</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>We will build a container image automatically, with a Dockerfile.</p>
+
+<p>At the end of this lab, you will be able to:</p>
+
+<ul>
+  <li>
+    <p>Write a Dockerfile.</p>
+  </li>
+  <li>
+    <p>Build an image from a Dockerfile.</p>
+  </li>
+</ul>
+
+<h4 id="dockerfile-overview">Dockerfile overview</h4>
+
+<ul>
+  <li>
+    <p>A Dockerfile is a build recipe for a Docker image.</p>
+  </li>
+  <li>
+    <p>It contains a series of instructions telling Docker how an image is constructed.</p>
+  </li>
+  <li>
+    <p>The docker build command builds an image from a Dockerfile.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-1-writing-our-first-dockerfile">Step 1: Writing our first Dockerfile</h4>
+
+<p>Our Dockerfile must be in a <strong>new, empty directory</strong>.</p>
+
+<p>Create a directory to hold our Dockerfile.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ mkdir myimage
+</code></pre>
+</div>
+<p>Create a Dockerfile inside this directory.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ cd myimage
+ $ vi Dockerfile
+</code></pre>
+</div>
+<p>Of course, you can use any other editor of your choice, if you are using a Windows device.</p>
+
+<p>Type this into our Dockerfile:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>FROM ubuntu
+
+RUN apt-get update
+
+RUN apt-get install figlet
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p>FROM indicates the base image for our build.</p>
+  </li>
+  <li>
+    <p>Each RUN line will be executed by Docker during the build.</p>
+  </li>
+  <li>
+    <p>Our RUN commands <strong>must be non-interactive.</strong>
+(No input can be provided to Docker during the build.)</p>
+  </li>
+  <li>
+    <p>In many cases, we will add the <code class="highlighter-rouge">-y</code> flag to apt-get.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-2-build-our-image">Step 2: Build our image</h4>
+
+<p>Save our file, then execute:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet:v1 .
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">-t</code> indicates the tag to apply to the image.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">.</code> indicates the location of the <em>build context</em>.
+(We will talk more about the build context later; but to keep things simple: this is the directory where our Dockerfile is located.)</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">:v1</code> tag it with a version number.</p>
+  </li>
+</ul>
+
+<p>What happens when we build the image? The output of docker build looks like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet:v1 .
+ Sending build context to Docker daemon 2.048 kB 
+ Step 1/3 : FROM ubuntu
+ ---&gt; e54ca5efa2e9
+ Step 2/3 : RUN apt-get update
+ ---&gt; Running in 840cb3533193
+ 
+ ...
+ 
+ ---&gt; 7257c37726a1
+ Removing intermediate container 840cb3533193 
+ Step 3/3 : RUN apt-get install figlet
+ ---&gt; Running in 2b44df762a2f
+ 
+ ...
+ 
+ ---&gt; f9e8f1642759
+ Removing intermediate container 2b44df762a2f 
+ Successfully built f9e8f1642759
+ Successfully tagged figlet:v1
+</code></pre>
+</div>
+
+<p>The output of the RUN commands has been omitted. Let’s explain what this output means:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Sending build context to Docker daemon 2.048 kB
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>The build context is the <code class="highlighter-rouge">.</code> directory given to <code class="highlighter-rouge">docker build</code>.</p>
+  </li>
+  <li>
+    <p>It is sent (as an archive) by the Docker client to the Docker daemon.</p>
+  </li>
+  <li>
+    <p>This allows to use a remote machine to build using local files.</p>
+  </li>
+  <li>
+    <p>Be careful (or patient) if that directory is big and your link is slow.</p>
+  </li>
+</ul>
+
+<p>The next step is:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Step 2/3 : RUN apt-get update
+
+---&gt; Running in 840cb3533193
+
+(...output of the RUN command...)
+
+ ---&gt; 7257c37726a1
+
+Removing intermediate container 840cb3533193
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p>A container (840cb3533193) is created from the base image.</p>
+  </li>
+  <li>
+    <p>The RUN command is executed in this container.</p>
+  </li>
+  <li>
+    <p>The container is committed into an image (7257c37726a1).</p>
+  </li>
+  <li>
+    <p>The build container (840cb3533193) is removed.</p>
+  </li>
+  <li>
+    <p>The output of this step will be the base image for the next one.</p>
+  </li>
+</ul>
+
+<p>Step 3 is like step 2.</p>
+
+<p><strong>The caching system</strong></p>
+
+<p>If you run the same build again, it will be instantaneous. Why?</p>
+
+<ul>
+  <li>
+    <p>After each build step, Docker takes a snapshot of the resulting image.</p>
+  </li>
+  <li>
+    <p>Before executing a step, Docker checks if it has already built the same sequence.</p>
+  </li>
+  <li>
+    <p>Docker uses the exact strings defined in your Dockerfile, so:</p>
+
+    <ul>
+      <li>
+        <p><code class="highlighter-rouge">RUN apt-get install figlet cowsay</code> is different from <code class="highlighter-rouge">RUN apt-get install cowsay figlet</code></p>
+      </li>
+      <li>
+        <p><code class="highlighter-rouge">RUN apt-get update</code> is not re-executed when the mirrors are updated.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>You can force a rebuild with <code class="highlighter-rouge">docker build --no-cache</code>.</p>
+
+<hr />
+
+<h4 id="step-3-running-the-image-and-viewing-history">Step 3: Running the image and viewing history</h4>
+
+<p>The resulting image is not different from the one produced manually.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -ti figlet:v1
+ root@91f3c974c9a1:/# figlet hello
+     _          _ _
+    | |__   ___| | | ___
+    |  _ \ / _ \ | |/ _ \
+    | | | |  __/ | | (_) |
+    |_| |_|\___|_|_|\___/
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">history</code> command lists all the layers composing an image.</p>
+
+<p>For each layer, it shows its creation time, size, and creation command.</p>
+
+<p>When an image was built with a Dockerfile, each layer corresponds to a line of the Dockerfile.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker history figlet:v1
+
+IMAGE               CREATED             CREATED BY                                      SIZE         COMMENT
+694e4c34b249        13 minutes ago      /bin/sh -c apt-get install figlet               1.45MB
+9f66bb25c374        13 minutes ago      /bin/sh -c apt-get update                       38.2MB
+f7b3f317ec73        13 days ago         /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+&lt;missing&gt;           13 days ago         /bin/sh -c mkdir -p /run/systemd &amp;&amp; echo '...   7B
+&lt;missing&gt;           13 days ago         /bin/sh -c sed -i 's/^#\s*\(deb.*universe\...   2.76kB
+&lt;missing&gt;           13 days ago         /bin/sh -c rm -rf /var/lib/apt/lists/*          0B
+&lt;missing&gt;           13 days ago         /bin/sh -c set -xe   &amp;&amp; echo '#!/bin/sh' &gt;...   745B
+&lt;missing&gt;           13 days ago         /bin/sh -c #(nop) ADD file:141408db9037263...   117MB
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-4-introducing-json-syntax">Step 4: Introducing JSON syntax</h4>
+
+<p>Most Dockerfile arguments can be passed in two forms:</p>
+
+<ul>
+  <li>
+    <p>plain string: <code class="highlighter-rouge">RUN apt-get install figlet</code></p>
+  </li>
+  <li>
+    <p>JSON list: <code class="highlighter-rouge">RUN ["apt-get", "install", "figlet"]</code></p>
+  </li>
+</ul>
+
+<p>Let’s change our Dockerfile as follows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN ["apt-get", "install", "figlet"]
+</code></pre>
+</div>
+
+<p>Then build the new Dockerfile.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet:v2 .
+</code></pre>
+</div>
+
+<p>Compare the new history:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker history figlet:v2
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+aa4000a75080        About an hour ago   apt-get install figlet                          1.02 MB
+240990a28931        About an hour ago   /bin/sh -c apt-get update                       38.3 MB
+ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]            0 B
+&lt;missing&gt;           6 days ago          /bin/sh -c mkdir -p /run/systemd &amp;&amp; echo '...   7 B
+&lt;missing&gt;           6 days ago          /bin/sh -c sed -i 's/^#\s*\(deb.*universe\...   2.76 kB
+&lt;missing&gt;           6 days ago          /bin/sh -c rm -rf /var/lib/apt/lists/*          0 B
+&lt;missing&gt;           6 days ago          /bin/sh -c set -xe   &amp;&amp; echo '#!/bin/sh' &gt;...   745 B
+&lt;missing&gt;           6 days ago          /bin/sh -c #(nop) ADD file:d14b493577228a4...   118 MB
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>JSON syntax specifies an <em>exact</em> command to execute.</p>
+  </li>
+  <li>
+    <p>String syntax specifies a command to be wrapped within <code class="highlighter-rouge">/bin/sh -c "..."</code>.</p>
+  </li>
+</ul>
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-a -->
+    
+
+  
+    
+
+    <section id=Lab08>
+    <div class="content-section-b">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="lab-8-cmd-and-entrypoint">Lab 8: CMD and ENTRYPOINT</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>In this lab, we will learn about two important Dockerfile commands: <code class="highlighter-rouge">CMD</code> and <code class="highlighter-rouge">ENTRYPOINT</code>.</p>
+
+<p>Those commands allow us to set the default command to run in a container.</p>
+
+<hr />
+
+<h4 id="step-1-defining-a-default-command">Step 1: Defining a default command</h4>
+
+<p>When people run our container, we want to greet them with a nice hello message, and using a custom font.</p>
+
+<p>For that, we will execute: <code class="highlighter-rouge">figlet -f script hello</code></p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">-f script</code> tells figlet to use a fancy font.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">hello</code> is the message that we want it to display.</p>
+  </li>
+</ul>
+
+<p>We adding <code class="highlighter-rouge">CMD</code> to our Dockerfile. Our new Dockerfile will look like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN ["apt-get", "install", "figlet"]
+
+ CMD figlet -f script hello
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">CMD</code> defines a default command to run when none is given.</p>
+  </li>
+  <li>
+    <p>It can appear at any point in the file.</p>
+  </li>
+  <li>
+    <p>Each <code class="highlighter-rouge">CMD</code> will replace and override the previous one.</p>
+  </li>
+  <li>
+    <p>As a result, while you can have multiple <code class="highlighter-rouge">CMD</code> lines, it is useless.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-2-build-and-test-our-image">Step 2: Build and test our image</h4>
+
+<p>Let’s build it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet .
+ 
+ ...
+ 
+ Successfully built 042dff3b4a8d
+</code></pre>
+</div>
+
+<p>And run it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run figlet 
+
+ _          _   _
+| |        | | | |
+| |     _  | | | |  __
+|/ \   |/  |/  |/  /  \_
+|   |_/|__/|__/|__/\__/
+
+</code></pre>
+</div>
+
+<p>If we want to get a shell into our container (instead of running figlet), we just have to specify a different program to run:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it figlet bash 
+ root@7ac86a641116:/
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>We specified bash.</p>
+  </li>
+  <li>
+    <p>It replaced the value of <code class="highlighter-rouge">CMD</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-3-using-entrypoint">Step 3: Using ENTRYPOINT</h4>
+
+<p>We want to be able to specify a different message on the command line, while retaining figlet and some default parameters.</p>
+
+<p>In other words, we would like to be able to do this:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> # DO RUN THIS COMMAND NOW, IT ENDS IN AN ERROR !!!
+ $ docker run figlet salut
+           _
+          | |
+ ,   __,  | |       _|_
+/ \_/  |  |/  |   |  |
+ \/ \_/|_/|__/ \_/|_/|_/
+
+</code></pre>
+</div>
+
+<p>We will use the <code class="highlighter-rouge">ENTRYPOINT</code> verb in Dockerfile. Add<code class="highlighter-rouge"> ENTRYPOINT</code> to your Dockerfile. Our new Dockerfile will look like this:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN ["apt-get", "install", "figlet"]
+
+ ENTRYPOINT ["figlet", "-f", "script"]
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">ENTRYPOINT</code> defines a base command (and its parameters) for the container.</p>
+  </li>
+  <li>
+    <p>The command line arguments are appended to those parameters.</p>
+  </li>
+  <li>
+    <p>Like <code class="highlighter-rouge">CMD</code>, <code class="highlighter-rouge">ENTRYPOINT</code> can appear anywhere, and replaces the previous value.</p>
+  </li>
+</ul>
+
+<p>Why did we use JSON syntax for our <code class="highlighter-rouge">ENTRYPOINT</code>?</p>
+
+<ul>
+  <li>
+    <p>When <code class="highlighter-rouge">CMD</code> or <code class="highlighter-rouge">ENTRYPOINT</code> use string syntax, they get wrapped in /bin/sh -c.</p>
+  </li>
+  <li>
+    <p>To avoid this wrapping, you must use JSON syntax.</p>
+  </li>
+</ul>
+
+<p>What if we used <code class="highlighter-rouge">ENTRYPOINT</code> with string syntax : <code class="highlighter-rouge">docker run figlet salut</code></p>
+
+<p>This would run the following command in the figlet image:<code class="highlighter-rouge">sh -c "figlet -f script" salut</code></p>
+
+<p>Build and test our image. Let’s build it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet .
+
+ ...
+
+ Successfully built 36f588918d73
+</code></pre>
+</div>
+<p>And run it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run figlet salut
+           _
+          | |
+ ,   __,  | |       _|_
+/ \_/  |  |/  |   |  |
+ \/ \_/|_/|__/ \_/|_/|_/
+
+</code></pre>
+</div>
+
+<p>Great success!</p>
+
+<hr />
+
+<h4 id="step-4-using-cmd-and-entrypoint-together">Step 4: Using CMD and ENTRYPOINT together</h4>
+
+<p>What if we want to define a default message for our container? Then we will use <code class="highlighter-rouge">ENTRYPOINT</code> and <code class="highlighter-rouge">CMD</code> together.</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">ENTRYPOINT</code> will define the base command for our container.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">CMD</code> will define the default parameter(s) for this command.</p>
+  </li>
+  <li>
+    <p>They <em>both</em> have to use JSON syntax.</p>
+  </li>
+</ul>
+
+<p>Our new Dockerfile will look like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN ["apt-get", "install", "figlet"]
+
+ ENTRYPOINT ["figlet", "-f", "script"]
+
+ CMD ["hello world"]
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">ENTRYPOINT</code> defines a base command (and its parameters) for the container.</p>
+  </li>
+  <li>
+    <p>If we don’t specify extra command-line arguments when starting the container, the value of <code class="highlighter-rouge">CMD</code> is appended.</p>
+  </li>
+  <li>
+    <p>Otherwise, our extra command-line arguments are used instead of <code class="highlighter-rouge">CMD</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-5-build-and-test-our-image">Step 5: Build and test our image</h4>
+
+<p>Let’s build it:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet .
+
+ ...
+
+ Successfully built 6e0b6a048a07
+</code></pre>
+</div>
+<p>And run it:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker run figlet
+ _          _   _                             _
+| |        | | | |                           | |    |
+| |     _  | | | |  __             __   ,_   | |  __|
+|/ \   |/  |/  |/  /  \_  |  |  |_/  \_/  |  |/  /  |
+|   |_/|__/|__/|__/\__/    \/ \/  \__/    |_/|__/\_/|_/
+
+</code></pre>
+</div>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run figlet hola mundo 
+ _           _
+| |         | |                                      |
+| |     __  | |  __,     _  _  _           _  _    __|   __
+|/ \   /  \_|/  /  |    / |/ |/ |  |   |  / |/ |  /  |  /  \_
+|   |_/\__/ |__/\_/|_/    |  |  |_/ \_/|_/  |  |_/\_/|_/\__/
+
+</code></pre>
+</div>
+
+<p>What if we want to run a shell in our container?</p>
+
+<p>We cannot just do <code class="highlighter-rouge">docker run figlet bash</code> because that would just tell figlet to display the word “bash.”</p>
+
+<p>We use the –entrypoint parameter:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it --entrypoint bash figlet 
+ root@b3ad7919177f:/#
+</code></pre>
+</div>
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-b -->
+    
+
+  
+    
+    <section id=Lab09>
+    <div class="content-section-a">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="lab-9-copying-files-during-the-build">Lab 9: Copying files during the build</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>So far, we have installed things in our container images by downloading packages. We can also copy files from the <em>build context</em> to the container that we are building.</p>
+
+<p>Remember: the <em>build context</em> is the directory containing the Dockerfile. In this chapter, we will learn a new Dockerfile keyword: <code class="highlighter-rouge">COPY</code></p>
+
+<hr />
+
+<h4 id="step-1-build-some-c-code">Step 1: Build some C code</h4>
+
+<p>We want to build a container that compiles a basic “Hello world” program in C. Here is the program, <code class="highlighter-rouge">hello.c</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> int main () 
+ { puts("Hello, world!"); return 0;
+ }
+</code></pre>
+</div>
+
+<p>Let’s first create a new directory for examle <code class="highlighter-rouge">hello</code> and than download this file in there.</p>
+
+<p>(hint: <code class="highlighter-rouge">wget hcs-company.github.io/docker/hello.c</code>)</p>
+
+<hr />
+
+<h4 id="step-2-write-the-dockerfile">Step 2: Write the Dockerfile.</h4>
+
+<p>On Debian and Ubuntu, the package build-essential will get us a compiler.</p>
+
+<p>When installing it, don’t forget to specify the <code class="highlighter-rouge">-y</code> flag, otherwise the build will fail (since the build cannot be interactive).</p>
+
+<p>Then we will use <code class="highlighter-rouge">COPY</code> to place the source file into the container.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN apt-get install -y build-essential
+
+ COPY hello.c /
+
+ RUN make hello
+
+ CMD /hello
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-3-create-this-dockerfile">Step 3: Create this Dockerfile.</h4>
+
+<p>Testing our C program</p>
+
+<ul>
+  <li>
+    <p>Create hello.c and Dockerfile in the same direcotry.</p>
+  </li>
+  <li>
+    <p>Run <code class="highlighter-rouge">docker build -t hello .</code> in this directory. This may give a warning.</p>
+  </li>
+  <li>
+    <p>Run <code class="highlighter-rouge">docker run hello </code>, you should see Hello, world!.</p>
+  </li>
+</ul>
+
+<p>Success!</p>
+
+<hr />
+
+<h4 id="step-4-copy-and-the-build-cache">Step 4: <code class="highlighter-rouge">COPY</code> and the build cache</h4>
+
+<ul>
+  <li>
+    <p>Run the build again.</p>
+  </li>
+  <li>
+    <p>Now, modify hello.c and run the build again.</p>
+  </li>
+  <li>
+    <p>Docker can cache steps involving COPY.</p>
+  </li>
+  <li>
+    <p>Those steps will not be executed again if the files haven’t been changed.</p>
+  </li>
+</ul>
+
+<p><strong>Details:</strong></p>
+
+<ul>
+  <li>
+    <p>You can <code class="highlighter-rouge">COPY</code> whole directories recursively.</p>
+  </li>
+  <li>
+    <p>Older Dockerfiles also have the <code class="highlighter-rouge">ADD</code> instruction. It is similar but can automatically extract archives.</p>
+  </li>
+  <li>
+    <p>If we really wanted to compile C code in a compiler, we would:</p>
+
+    <ul>
+      <li>
+        <p>Place it in a different directory, with the <code class="highlighter-rouge">WORKDIR</code> instruction.</p>
+      </li>
+      <li>
+        <p>Even better, use the gcc official image.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-a -->
+    
+
+  
+    
+
+    <section id=Lab10>
+    <div class="content-section-b">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="lab-10-operations-with-images">Lab 10: Operations with images</h2>
+
+<h4 id="objectives">Objectives</h4>
+
+<p>You are already familiar with one command, <code class="highlighter-rouge">docker images</code>. You can also remove images, tag and untag them. Also we learn how to push and pull a image to a local registry.</p>
+
+<hr />
+
+<h4 id="step-1-build-a-new-version">Step 1: Build a new version</h4>
+
+<p>First let build the new figlet v3 from Dockerfile, so that we have more versions.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet:v3 .
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-2-removing-images-and-containers">Step 2: Removing images and containers</h4>
+
+<p>Let’s start with removing the image figlet version 1 (figlet:v1) that takes too much disk space:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker rmi figlet:v1
+Error response from daemon: conflict: unable to remove repository reference "figlet:v1" (must force) - container 3b8931ffdacd is using its referenced image bbc0e5eb5777
+
+</code></pre>
+</div>
+
+<p>Docker complains that there are containers using this image. How is this possible? We thought that all our containers are gone.
+Actually, Docker keeps track of all containers, even those that have stopped:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND                    CREATED             STATUS                        PORTS                    NAMES
+74ed5559950b        figlet              "bash"                     5 hours ago         Exited (127) 5 seconds ago                             stupefied_colden
+025bc7941f8d        figlet              "bash"                     5 hours ago         Exited (0) 17 minutes ago                              determined_mestorf
+2a4897f417e6        figlet              "/bin/sh -c 'figle..."     5 hours ago         Exited (0) 18 minutes ago                              infallible_euler
+</code></pre>
+</div>
+
+<p>We can now delete the container:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker rm 74ed5559950b
+74ed5559950b
+</code></pre>
+</div>
+
+<p>and the image:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker rmi figlet:v1
+Untagged: figlet:v1
+Deleted: sha256:1deb0689407271616d779920b479c2f1fcacb704f7d2b1a155f30e53cb63754f
+Deleted: sha256:78564bb1cdb863ad490ba272d04b5c1bf60bb390bd3a9d9aa6ce5e140d597bc3
+Deleted: sha256:ed08aaa4b5b884fd1270c3171709063a941bb0cf2f9e8201fc5166be3e406b1e
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-3-tagging-images">Step 3: Tagging images</h4>
+
+<p><code class="highlighter-rouge">docker tag</code> helps us to tag images.</p>
+
+<p>We have a lot of versions of <code class="highlighter-rouge">figlet</code> built, but latest still points to the old <code class="highlighter-rouge">v2</code>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images | grep figlet
+figlet                                             v2                  bbc0e5eb5777        2 days ago          170 MB
+figlet                                             v3                  bbc0e5eb5777        2 days ago          170 MB
+figlet                                             latest              b7fa8e20196b        2 days ago          170 MB
+</code></pre>
+</div>
+
+<p>Let’s change that by re-tagging <code class="highlighter-rouge">latest</code> to <code class="highlighter-rouge">v4</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker tag figlet:v4 figlet:latest
+$ docker images | grep figlet
+figlet                                             v2                  bbc0e5eb5777        2 days ago          170 MB
+figlet                                             v3                  bbc0e5eb5777        2 days ago          170 MB
+figlet                                             latest              b7fa8e20196b        2 days ago          170 MB
+figlet                                             v4                  b7fa8e20196b        2 days ago          170 MB
+
+</code></pre>
+</div>
+
+<p>Both <code class="highlighter-rouge">v4</code> and <code class="highlighter-rouge">latest</code> point to the same image ID.</p>
+
+<hr />
+
+<h4 id="step-4-publishing-images-to-a-local-registry">Step 4: Publishing images to a local registry</h4>
+
+<p>A registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. You can use a public registry or a local registry.</p>
+
+<p>Docker expects all registries to run on HTTPS. But for this lab we will run a version on HTTP. The Docker Engine needs to be explicitly setup to use HTTP for the insecure registry.</p>
+
+<p>In Docker for Mac, the Preferences menu lets you set the address for an insecure registry under the Daemon panel:</p>
+
+<p><img src="img/docker_osx_insecure_registry.png" alt="docker-settings-mac" /></p>
+
+<p>In Docker for Windows, the Settings menu lets you set the address for an insecure registry under the Daemon panel:</p>
+
+<p><img src="img/docker_windows_insecure_registry.png" alt="docker-settings-windows" /></p>
+
+<p>Let us spin now up a <strong>local</strong> registry:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker run -p 5000:5000 --name registry -d registry:2
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">docker push</code> is used to publish images to registries.</p>
+
+<p>To instruct where we want to publish, we need to append registry address to repository name:</p>
+
+<p>First tag the figlet images:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker tag figlet:v4 127.0.0.1:5000/figlet:v4
+</code></pre>
+</div>
+<p>After that push the images to the local registry:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker push 127.0.0.1:5000/figlet:v4
+The push refers to a repository [127.0.0.1:5000/figlet]
+78171efc0c5e: Pushed
+5154177609a7: Pushed
+33f1a94ed7fc: Pushed
+b27287a6dbce: Pushed
+47c2386f248c: Pushed
+2be95f0d8a0c: Pushed
+2df9b8def18a: Pushed
+v4: digest: sha256:dd02511304a21786165baead16b0f140d573a693e925215b99254585d4931898 size: 1779
+</code></pre>
+</div>
+<hr />
+
+<h4 id="step-5-remove-figletv4-image">Step 5: Remove figlet:v4 image</h4>
+
+<p>Enter the following commands to clean up figlet version 4:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker rmi 127.0.0.1:5000/figlet:v4
+</code></pre>
+</div>
+
+<p>See that the figlet images are removed.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-6-pull-the-image-from-registry">Step 6: PULL the image from registry</h4>
+
+<p>We can now download the image using the <code class="highlighter-rouge">docker pull</code> command:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker pull 127.0.0.1:5000/figlet:v4
+v4: Pulling from figlet
+Digest: sha256:c472a7ec8ab2b0db8d0839043b24dbda75ca6fa8816cfb6a58e7aaf3714a1423
+Status: Image is up to date for 127.0.0.1:5000/figlet
+</code></pre>
+</div>
+
+<p>and see that it is back again:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images
+</code></pre>
+</div>
+
+<p><strong>Well Done !!!!</strong></p>
+
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-b -->
+    
+
+  
+    
+    <section id=Quiz>
+    <div class="content-section-a">
+
+        <div class="container">
+
+            <div class="row">
+		<div class="col-lg-10 col-lg-offset-2">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <div class="lead"><h2 id="docker-quizizz">Docker Quiz(izz)</h2>
+
+<hr />
+
+<p>The Docker quiz is a collection of questions, created by the instructor, they are asked in real-time, to al the “players”.
+During gameplay, on the screen of the “players” devices, the questions and the 4 multiple choice answers are displayed. 
+The “player” needs to click or tap on the rectangle representing the correct answer.</p>
+
+<p>The Docker quiz is made on Quizizz. When Quizizz is launched, it will ask an unique PIN, which is show on the instructor screen, this PIN is randomly generated by the system. After that enter your name.</p>
+
+<p>Let’s play the <a href="https://quizizz.com/join/">Docker Quiz(izz) !!</a></p>
+</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    </section>
+    <!-- /.content-section-a -->
     
 
 </section>
@@ -514,7 +2553,7 @@ bash: figlet: command not found
 <script src="js/landing-page.js"></script>
 
 <!-- Custom  JavaScript copy/past-->
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 $(document).ready(function () {
     //Disable cut copy paste
     $('body').bind('cut copy paste', function (e) {
@@ -524,7 +2563,7 @@ $(document).ready(function () {
     $("body").on("contextmenu",function(e){
         return false;
     });
-});
+}); -->
 </script>
 
 	</body>

@@ -1,0 +1,289 @@
+<h2 id="lab-7-building-images-with-a-dockerfile">Lab 7: Building Images With A Dockerfile</h2>
+
+<hr />
+
+<h4 id="objectives">Objectives</h4>
+
+<p>We will build a container image automatically, with a Dockerfile.</p>
+
+<p>At the end of this lab, you will be able to:</p>
+
+<ul>
+  <li>
+    <p>Write a Dockerfile.</p>
+  </li>
+  <li>
+    <p>Build an image from a Dockerfile.</p>
+  </li>
+</ul>
+
+<h4 id="dockerfile-overview">Dockerfile overview</h4>
+
+<ul>
+  <li>
+    <p>A Dockerfile is a build recipe for a Docker image.</p>
+  </li>
+  <li>
+    <p>It contains a series of instructions telling Docker how an image is constructed.</p>
+  </li>
+  <li>
+    <p>The docker build command builds an image from a Dockerfile.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-1-writing-our-first-dockerfile">Step 1: Writing our first Dockerfile</h4>
+
+<p>Our Dockerfile must be in a <strong>new, empty directory</strong>.</p>
+
+<p>Create a directory to hold our Dockerfile.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ mkdir myimage
+</code></pre>
+</div>
+<p>Create a Dockerfile inside this directory.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ cd myimage
+ $ vi Dockerfile
+</code></pre>
+</div>
+<p>Of course, you can use any other editor of your choice, if you are using a Windows device.</p>
+
+<p>Type this into our Dockerfile:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>FROM ubuntu
+
+RUN apt-get update
+
+RUN apt-get install figlet
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p>FROM indicates the base image for our build.</p>
+  </li>
+  <li>
+    <p>Each RUN line will be executed by Docker during the build.</p>
+  </li>
+  <li>
+    <p>Our RUN commands <strong>must be non-interactive.</strong>
+(No input can be provided to Docker during the build.)</p>
+  </li>
+  <li>
+    <p>In many cases, we will add the <code class="highlighter-rouge">-y</code> flag to apt-get.</p>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="step-2-build-our-image">Step 2: Build our image</h4>
+
+<p>Save our file, then execute:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet:v1 .
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">-t</code> indicates the tag to apply to the image.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">.</code> indicates the location of the <em>build context</em>.
+(We will talk more about the build context later; but to keep things simple: this is the directory where our Dockerfile is located.)</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">:v1</code> tag it with a version number.</p>
+  </li>
+</ul>
+
+<p>What happens when we build the image? The output of docker build looks like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet:v1 .
+ Sending build context to Docker daemon 2.048 kB 
+ Step 1/3 : FROM ubuntu
+ ---&gt; e54ca5efa2e9
+ Step 2/3 : RUN apt-get update
+ ---&gt; Running in 840cb3533193
+ 
+ ...
+ 
+ ---&gt; 7257c37726a1
+ Removing intermediate container 840cb3533193 
+ Step 3/3 : RUN apt-get install figlet
+ ---&gt; Running in 2b44df762a2f
+ 
+ ...
+ 
+ ---&gt; f9e8f1642759
+ Removing intermediate container 2b44df762a2f 
+ Successfully built f9e8f1642759
+ Successfully tagged figlet:v1
+</code></pre>
+</div>
+
+<p>The output of the RUN commands has been omitted. Let’s explain what this output means:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Sending build context to Docker daemon 2.048 kB
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>The build context is the <code class="highlighter-rouge">.</code> directory given to <code class="highlighter-rouge">docker build</code>.</p>
+  </li>
+  <li>
+    <p>It is sent (as an archive) by the Docker client to the Docker daemon.</p>
+  </li>
+  <li>
+    <p>This allows to use a remote machine to build using local files.</p>
+  </li>
+  <li>
+    <p>Be careful (or patient) if that directory is big and your link is slow.</p>
+  </li>
+</ul>
+
+<p>The next step is:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Step 2/3 : RUN apt-get update
+
+---&gt; Running in 840cb3533193
+
+(...output of the RUN command...)
+
+ ---&gt; 7257c37726a1
+
+Removing intermediate container 840cb3533193
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p>A container (840cb3533193) is created from the base image.</p>
+  </li>
+  <li>
+    <p>The RUN command is executed in this container.</p>
+  </li>
+  <li>
+    <p>The container is committed into an image (7257c37726a1).</p>
+  </li>
+  <li>
+    <p>The build container (840cb3533193) is removed.</p>
+  </li>
+  <li>
+    <p>The output of this step will be the base image for the next one.</p>
+  </li>
+</ul>
+
+<p>Step 3 is like step 2.</p>
+
+<p><strong>The caching system</strong></p>
+
+<p>If you run the same build again, it will be instantaneous. Why?</p>
+
+<ul>
+  <li>
+    <p>After each build step, Docker takes a snapshot of the resulting image.</p>
+  </li>
+  <li>
+    <p>Before executing a step, Docker checks if it has already built the same sequence.</p>
+  </li>
+  <li>
+    <p>Docker uses the exact strings defined in your Dockerfile, so:</p>
+
+    <ul>
+      <li>
+        <p><code class="highlighter-rouge">RUN apt-get install figlet cowsay</code> is different from <code class="highlighter-rouge">RUN apt-get install cowsay figlet</code></p>
+      </li>
+      <li>
+        <p><code class="highlighter-rouge">RUN apt-get update</code> is not re-executed when the mirrors are updated.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>You can force a rebuild with <code class="highlighter-rouge">docker build --no-cache</code>.</p>
+
+<hr />
+
+<h4 id="step-3-running-the-image-and-viewing-history">Step 3: Running the image and viewing history</h4>
+
+<p>The resulting image is not different from the one produced manually.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -ti figlet:v1
+ root@91f3c974c9a1:/# figlet hello
+     _          _ _
+    | |__   ___| | | ___
+    |  _ \ / _ \ | |/ _ \
+    | | | |  __/ | | (_) |
+    |_| |_|\___|_|_|\___/
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">history</code> command lists all the layers composing an image.</p>
+
+<p>For each layer, it shows its creation time, size, and creation command.</p>
+
+<p>When an image was built with a Dockerfile, each layer corresponds to a line of the Dockerfile.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker history figlet:v1
+
+IMAGE               CREATED             CREATED BY                                      SIZE         COMMENT
+694e4c34b249        13 minutes ago      /bin/sh -c apt-get install figlet               1.45MB
+9f66bb25c374        13 minutes ago      /bin/sh -c apt-get update                       38.2MB
+f7b3f317ec73        13 days ago         /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+&lt;missing&gt;           13 days ago         /bin/sh -c mkdir -p /run/systemd &amp;&amp; echo '...   7B
+&lt;missing&gt;           13 days ago         /bin/sh -c sed -i 's/^#\s*\(deb.*universe\...   2.76kB
+&lt;missing&gt;           13 days ago         /bin/sh -c rm -rf /var/lib/apt/lists/*          0B
+&lt;missing&gt;           13 days ago         /bin/sh -c set -xe   &amp;&amp; echo '#!/bin/sh' &gt;...   745B
+&lt;missing&gt;           13 days ago         /bin/sh -c #(nop) ADD file:141408db9037263...   117MB
+</code></pre>
+</div>
+
+<hr />
+
+<h4 id="step-4-introducing-json-syntax">Step 4: Introducing JSON syntax</h4>
+
+<p>Most Dockerfile arguments can be passed in two forms:</p>
+
+<ul>
+  <li>
+    <p>plain string: <code class="highlighter-rouge">RUN apt-get install figlet</code></p>
+  </li>
+  <li>
+    <p>JSON list: <code class="highlighter-rouge">RUN ["apt-get", "install", "figlet"]</code></p>
+  </li>
+</ul>
+
+<p>Let’s change our Dockerfile as follows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
+
+ RUN apt-get update
+
+ RUN ["apt-get", "install", "figlet"]
+</code></pre>
+</div>
+
+<p>Then build the new Dockerfile.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet:v2 .
+</code></pre>
+</div>
+
+<p>Compare the new history:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker history figlet:v2
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+aa4000a75080        About an hour ago   apt-get install figlet                          1.02 MB
+240990a28931        About an hour ago   /bin/sh -c apt-get update                       38.3 MB
+ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]            0 B
+&lt;missing&gt;           6 days ago          /bin/sh -c mkdir -p /run/systemd &amp;&amp; echo '...   7 B
+&lt;missing&gt;           6 days ago          /bin/sh -c sed -i 's/^#\s*\(deb.*universe\...   2.76 kB
+&lt;missing&gt;           6 days ago          /bin/sh -c rm -rf /var/lib/apt/lists/*          0 B
+&lt;missing&gt;           6 days ago          /bin/sh -c set -xe   &amp;&amp; echo '#!/bin/sh' &gt;...   745 B
+&lt;missing&gt;           6 days ago          /bin/sh -c #(nop) ADD file:d14b493577228a4...   118 MB
+</code></pre>
+</div>
+<ul>
+  <li>
+    <p>JSON syntax specifies an <em>exact</em> command to execute.</p>
+  </li>
+  <li>
+    <p>String syntax specifies a command to be wrapped within <code class="highlighter-rouge">/bin/sh -c "..."</code>.</p>
+  </li>
+</ul>
