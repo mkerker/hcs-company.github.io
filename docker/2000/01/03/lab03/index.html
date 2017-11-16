@@ -33,7 +33,7 @@
 
 <h4 id="step-1-a-non-interactive-container">Step 1: A non-interactive container</h4>
 
-<p>We will run a small custom container, more about this containers will explain in lab 5.</p>
+<p>We will run a small custom container.</p>
 
 <p>This container just displays the time every second.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker run hcscompany/clock
@@ -91,7 +91,7 @@
 
 <p>With <code class="highlighter-rouge">docker ps</code>, just like the UNIX ps command, lists running processes.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps
-  CONTAINER ID  IMAGE             ...  CREATED        STATUS        ...
+  CONTAINER ID  IMAGE           ...  CREATED        STATUS        ...
   47d677dcfba4  hcscompany/clock  ...  2 minutes ago  Up 2 minutes  ...
 </code></pre>
 </div>
@@ -155,8 +155,8 @@
 
 <p>We told you that Docker was logging the container output.</p>
 
-<p>Let’s see that now.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs 068
+<p>Let’s see that now. Use on <ID> our own ID, from the command above.</ID></p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs &lt;ID&gt;
  Fri Feb 20 00:39:52 UTC 
  Fri Feb 20 00:39:53 UTC
  ...
@@ -164,7 +164,7 @@
 </div>
 <ul>
   <li>
-    <p>We specified a <em>prefix</em> of the full container ID.</p>
+    <p>We can specified a <em>prefix</em> of the full container ID, in our example <code class="highlighter-rouge">068</code>.</p>
   </li>
   <li>
     <p>You can, of course, specify the full ID.</p>
@@ -178,8 +178,8 @@
 
 <h4 id="step-7-view-only-the-tail-of-the-logs">Step 7: View only the tail of the logs</h4>
 
-<p>To avoid being spammed with eleventy pages of output, we can use the <code class="highlighter-rouge">--tail</code> option:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 3 068 
+<p>To avoid being spammed with eleventy pages of output, we can use the –tail option:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 3 &lt;ID&gt;
  Fri Feb 20 00:55:35 UTC 
  Fri Feb 20 00:55:36 UTC 
  Fri Feb 20 00:55:37 UTC
@@ -194,9 +194,9 @@
 <h4 id="step-8-follow-the-logs-in-real-time">Step 8: Follow the logs in real time</h4>
 
 <p>Just like with the standard UNIX command <code class="highlighter-rouge">tail -f</code>, we can <code class="highlighter-rouge">follow</code> the logs of our container:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 1 --follow 068 
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 1 --follow &lt;ID&gt; 
  Fri Feb 20 00:57:12 UTC
- Fri Feb 20 00:57:13 UTC
+ Fri Feb 20 00:57:13 UTC ^C
 </code></pre>
 </div>
 <ul>
@@ -207,7 +207,7 @@
     <p>Then, it will continue to display the logs in real time.</p>
   </li>
   <li>
-    <p><strong>Use ^C to exit</strong>.</p>
+    <p>Use ^C to exit.</p>
   </li>
 </ul>
 
@@ -232,6 +232,8 @@
 
 <p>Reminder: the KILL signal cannot be intercepted, and will forcibly terminate the container.</p>
 
+<p><em>Stopping our containers</em></p>
+
 <p>Let’s stop one of those containers:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker stop 47d6 
  47d6
@@ -254,7 +256,9 @@
   </li>
 </ul>
 
-<p>Let’s be less patient with the two other containers and kill the remaining containers:</p>
+<p><em>Killing the remaining containers</em></p>
+
+<p>Let’s be less patient with the two other containers:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker kill 068 57ad 
  068
  57ad
@@ -267,18 +271,15 @@
 </code></pre>
 </div>
 
-<hr />
-
-<h4 id="step-10-list-stopped-containers">Step 10: List stopped containers</h4>
+<p><strong>List stopped containers</strong></p>
 
 <p>We can also see stopped containers, with the <code class="highlighter-rouge">-a (--all)</code> option.</p>
-
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps -a
-  CONTAINER ID  IMAGE             ...  CREATED      STATUS
-  068cc994ffd0  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
-  57ad9bdfc06b  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
-  47d677dcfba4  hcscompany/clock  ...  23 min. ago  Exited (137) 3 min. ago
-  5c1dfd4d81f1  hcscompany/clock  ...  40 min. ago  Exited (0) 40 min. ago
-  b13c164401fb  ubuntu            ...  55 min. ago  Exited (130) 53 min. ago
+    CONTAINER ID  IMAGE           ...  CREATED      STATUS
+    068cc994ffd0  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
+    57ad9bdfc06b  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
+    47d677dcfba4  hcscompany/clock  ...  23 min. ago  Exited (137) 3 min. ago
+    5c1dfd4d81f1  hcscompany/clock  ...  40 min. ago  Exited (0) 40 min. ago
+    b13c164401fb  ubuntu          ...  55 min. ago  Exited (130) 53 min. ago
 </code></pre>
 </div>

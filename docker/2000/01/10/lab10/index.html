@@ -2,7 +2,7 @@
 
 <h4 id="objectives">Objectives</h4>
 
-<p>You are already familiar with one command, <code class="highlighter-rouge">docker images</code>. You can also remove images, tag and untag them. Also we learn how to push and pull a image to a local registry.</p>
+<p>You are already familiar with one command, <code class="highlighter-rouge">docker images</code>. You can also remove images, tag and untag them.</p>
 
 <hr />
 
@@ -59,23 +59,20 @@ Deleted: sha256:ed08aaa4b5b884fd1270c3171709063a941bb0cf2f9e8201fc5166be3e406b1e
 
 <p><code class="highlighter-rouge">docker tag</code> helps us to tag images.</p>
 
-<p>We have a lot of versions of <code class="highlighter-rouge">figlet</code> built, but latest still points to the old <code class="highlighter-rouge">v2</code>.</p>
+<p>We have a lot of versions of <code class="highlighter-rouge">figlet</code> built, but latest still points to the old <code class="highlighter-rouge">v1</code>.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker images | grep figlet
 figlet                                             v2                  bbc0e5eb5777        2 days ago          170 MB
 figlet                                             v3                  bbc0e5eb5777        2 days ago          170 MB
 figlet                                             latest              b7fa8e20196b        2 days ago          170 MB
+figlet                                             v1                  b7fa8e20196b        2 days ago          170 MB
 </code></pre>
 </div>
 
 <p>Let’s change that by re-tagging <code class="highlighter-rouge">latest</code> to <code class="highlighter-rouge">v4</code>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker tag figlet:v4 figlet:latest
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker tag figlet:latest figlet:v4
 $ docker images | grep figlet
-figlet                                             v2                  bbc0e5eb5777        2 days ago          170 MB
-figlet                                             v3                  bbc0e5eb5777        2 days ago          170 MB
-figlet                                             latest              b7fa8e20196b        2 days ago          170 MB
-figlet                                             v4                  b7fa8e20196b        2 days ago          170 MB
 
 </code></pre>
 </div>
@@ -86,19 +83,8 @@ figlet                                             v4                  b7fa8e201
 
 <h4 id="step-4-publishing-images-to-a-local-registry">Step 4: Publishing images to a local registry</h4>
 
-<p>A registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. You can use a public registry or a local registry.</p>
-
-<p>Docker expects all registries to run on HTTPS. But for this lab we will run a version on HTTP. The Docker Engine needs to be explicitly setup to use HTTP for the insecure registry.</p>
-
-<p>In Docker for Mac, the Preferences menu lets you set the address for an insecure registry under the Daemon panel:</p>
-
-<p><img src="img/docker_osx_insecure_registry.png" alt="docker-settings-mac" /></p>
-
-<p>In Docker for Windows, the Settings menu lets you set the address for an insecure registry under the Daemon panel:</p>
-
-<p><img src="img/docker_windows_insecure_registry.png" alt="docker-settings-windows" /></p>
-
-<p>Let us spin now up a <strong>local</strong> registry:</p>
+<p>Images are distributed with a special service - <code class="highlighter-rouge">docker registry</code>.
+Let us spin up a local registry:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker run -p 5000:5000 --name registry -d registry:2
 </code></pre>
@@ -108,36 +94,33 @@ figlet                                             v4                  b7fa8e201
 
 <p>To instruct where we want to publish, we need to append registry address to repository name:</p>
 
-<p>First tag the figlet images:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker tag figlet:v4 127.0.0.1:5000/figlet:v4
+$ docker push 127.0.0.1:5000/figlet:v4
 </code></pre>
 </div>
-<p>After that push the images to the local registry:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker push 127.0.0.1:5000/figlet:v4
-The push refers to a repository [127.0.0.1:5000/figlet]
-78171efc0c5e: Pushed
-5154177609a7: Pushed
-33f1a94ed7fc: Pushed
-b27287a6dbce: Pushed
-47c2386f248c: Pushed
-2be95f0d8a0c: Pushed
-2df9b8def18a: Pushed
-v4: digest: sha256:dd02511304a21786165baead16b0f140d573a693e925215b99254585d4931898 size: 1779
-</code></pre>
-</div>
+
+<p><code class="highlighter-rouge">docker push</code> pushed the image to our “remote” registry.</p>
+
 <hr />
 
-<h4 id="step-5-remove-figletv4-image">Step 5: Remove figlet:v4 image</h4>
+<h4 id="step-5-stop-all-dockers-containers-and-images">Step 5: Stop all dockers containers and images</h4>
 
-<p>Enter the following commands to clean up figlet version 4:</p>
+<p>Enter the following commands to clean up:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker rmi 127.0.0.1:5000/figlet:v4
+<div class="highlighter-rouge"><pre class="highlight"><code># Stop all docker containers
+$ docker stop $(ps docker -q -a | grep figlet)
+
+# Delete every Docker containers
+# Must be run first because images are attached to containers
+$ docker rm -f $(docker ps -a -q | grep figlet)
+
+# Delete every Docker image
+$ docker rmi -f $(docker images -q | grep figlet)
 </code></pre>
 </div>
-
 <p>See that the figlet images are removed.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images -q | grep figlet
 </code></pre>
 </div>
 
@@ -147,18 +130,18 @@ v4: digest: sha256:dd02511304a21786165baead16b0f140d573a693e925215b99254585d4931
 
 <p>We can now download the image using the <code class="highlighter-rouge">docker pull</code> command:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker pull 127.0.0.1:5000/figlet:v4
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker pull 127.0.0.1:5000/figlet
 v4: Pulling from figlet
 Digest: sha256:c472a7ec8ab2b0db8d0839043b24dbda75ca6fa8816cfb6a58e7aaf3714a1423
 Status: Image is up to date for 127.0.0.1:5000/figlet
 </code></pre>
 </div>
 
-<p>and see that it is back again:</p>
+<p>and see that it is pulled.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker images
 </code></pre>
 </div>
 
-<p><strong>Well Done !!!!</strong></p>
+<p>Repeat <strong>Step 2</strong> if you want a clean envoirement.</p>
 

@@ -72,7 +72,7 @@
 				<div class="col-lg-12">
 					<div class="intro-message">
 						<h1>Let's play with Docker</h1>
-						<h3>A Docker Workshop on 27 juni at HCS-Company by M. Kerker</h3>
+						<h3>A Docker Workshop on 28 november at HCS-Company by M. Kerker</h3>
 						<hr class="intro-divider">
 						<h3>In this instructor-led workshop on your own device, you will get a introductory crash course on the Docker platform and how to get started with containers. We will take you through hands-on exercises designed to help you learn the skills to run and build containers and how to distribute container images. So bring your own device with you and let’s play with Docker.</h3>
 						<hr class="intro-divider">
@@ -155,28 +155,28 @@
 
 <h4 id="step-1-download-docker">Step 1: Download Docker</h4>
 
-<p>First we must download Docker for your own device, get the right packaged for your platform:</p>
+<p>First we must download Docker for your own Device, get the right packaged for your platform:</p>
 
 <ul>
-  <li><a href="https://download.docker.com/win/stable/InstallDocker.msi">Windows 10 Professional or Enterprise 64-bit</a></li>
+  <li><a href="https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe">Windows 10 Professional or Enterprise 64-bit</a></li>
   <li><a href="https://download.docker.com/mac/stable/Docker.dmg">Mac OS Yosemite 10.10.3 or above</a></li>
 </ul>
 
-<p>For previous OS versions use <a href="http://labs.play-with-docker.com/">play-with-docker</a>.</p>
+<p>For previous OS versions use an online playground: <a href="http://labs.play-with-docker.com/">playground 1</a> or <a href="https://www.katacoda.com/courses/docker/playground#">playground 2</a></p>
 
 <hr />
 
-<h4 id="step-2-install-docker-if-you-dont-use-play-with-docker">Step 2: Install Docker (if you don’t use play-with-docker)</h4>
+<h4 id="step-2-install-docker">Step 2: Install Docker</h4>
 
-<p>Double-click on <code class="highlighter-rouge">Docker.dmg</code> for Mac and <code class="highlighter-rouge">InstallDocker.msi</code> for Windows to start the install process.</p>
+<p>Double-click on <code class="highlighter-rouge">Docker.dmg</code> for Mac and <code class="highlighter-rouge">Docker for Windows Installer.exe</code> for Windows to start the install process.</p>
 
-<p>When the installation finishes, Docker starts automatically. On the Mac a whale appears in the top status bar and for Windows the whale appears in the notification area. This indicates that Docker is running and accessible from a terminal.</p>
+<p>When the installation finishes, Docker starts automatically. On the Mac a whale appears in the top status bar or for Windows the whale appears in the notification area and indicates that Docker is running, and accessible from a terminal.</p>
 
 <hr />
 
 <h4 id="step-3-run-it">Step 3: Run it</h4>
 
-<p>Open a command-line terminal <em>(for Windows try PowerShell or even better install <a href="https://cygwin.com/install.html">Cygwin</a>)</em> and try out some Docker commands. Or if you use play-with-docker press +ADD NEW INSTANCE.</p>
+<p>Open a command-line terminal -<em>for Windows try PowerShell or install <a href="https://cygwin.com/install.html">Cygwin</a></em>-, and try out some Docker commands.</p>
 
 <ul>
   <li>Run <code class="highlighter-rouge">docker version</code> to check that you have the latest release installed.</li>
@@ -508,7 +508,7 @@ bash: figlet: command not found
 
 <h4 id="step-1-a-non-interactive-container">Step 1: A non-interactive container</h4>
 
-<p>We will run a small custom container, more about this container will explain in lab 5.</p>
+<p>We will run a small custom container.</p>
 
 <p>This container just displays the time every second.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker run hcscompany/clock
@@ -566,7 +566,7 @@ bash: figlet: command not found
 
 <p>With <code class="highlighter-rouge">docker ps</code>, just like the UNIX ps command, lists running processes.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps
-  CONTAINER ID  IMAGE             ...  CREATED        STATUS        ...
+  CONTAINER ID  IMAGE           ...  CREATED        STATUS        ...
   47d677dcfba4  hcscompany/clock  ...  2 minutes ago  Up 2 minutes  ...
 </code></pre>
 </div>
@@ -630,8 +630,8 @@ bash: figlet: command not found
 
 <p>We told you that Docker was logging the container output.</p>
 
-<p>Let’s see that now.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs 068
+<p>Let’s see that now. Use on <ID> our own ID, from the command above.</ID></p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs &lt;ID&gt;
  Fri Feb 20 00:39:52 UTC 
  Fri Feb 20 00:39:53 UTC
  ...
@@ -639,7 +639,7 @@ bash: figlet: command not found
 </div>
 <ul>
   <li>
-    <p>We specified a <em>prefix</em> of the full container ID.</p>
+    <p>We can specified a <em>prefix</em> of the full container ID, in our example <code class="highlighter-rouge">068</code>.</p>
   </li>
   <li>
     <p>You can, of course, specify the full ID.</p>
@@ -653,8 +653,8 @@ bash: figlet: command not found
 
 <h4 id="step-7-view-only-the-tail-of-the-logs">Step 7: View only the tail of the logs</h4>
 
-<p>To avoid being spammed with eleventy pages of output, we can use the <code class="highlighter-rouge">--tail</code> option:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 3 068 
+<p>To avoid being spammed with eleventy pages of output, we can use the –tail option:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 3 &lt;ID&gt;
  Fri Feb 20 00:55:35 UTC 
  Fri Feb 20 00:55:36 UTC 
  Fri Feb 20 00:55:37 UTC
@@ -669,9 +669,9 @@ bash: figlet: command not found
 <h4 id="step-8-follow-the-logs-in-real-time">Step 8: Follow the logs in real time</h4>
 
 <p>Just like with the standard UNIX command <code class="highlighter-rouge">tail -f</code>, we can <code class="highlighter-rouge">follow</code> the logs of our container:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 1 --follow 068 
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker logs --tail 1 --follow &lt;ID&gt; 
  Fri Feb 20 00:57:12 UTC
- Fri Feb 20 00:57:13 UTC
+ Fri Feb 20 00:57:13 UTC ^C
 </code></pre>
 </div>
 <ul>
@@ -682,7 +682,7 @@ bash: figlet: command not found
     <p>Then, it will continue to display the logs in real time.</p>
   </li>
   <li>
-    <p><strong>Use ^C to exit</strong>.</p>
+    <p>Use ^C to exit.</p>
   </li>
 </ul>
 
@@ -707,6 +707,8 @@ bash: figlet: command not found
 
 <p>Reminder: the KILL signal cannot be intercepted, and will forcibly terminate the container.</p>
 
+<p><em>Stopping our containers</em></p>
+
 <p>Let’s stop one of those containers:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker stop 47d6 
  47d6
@@ -729,7 +731,9 @@ bash: figlet: command not found
   </li>
 </ul>
 
-<p>Let’s be less patient with the two other containers and kill the remaining containers:</p>
+<p><em>Killing the remaining containers</em></p>
+
+<p>Let’s be less patient with the two other containers:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker kill 068 57ad 
  068
  57ad
@@ -742,19 +746,16 @@ bash: figlet: command not found
 </code></pre>
 </div>
 
-<hr />
-
-<h4 id="step-10-list-stopped-containers">Step 10: List stopped containers</h4>
+<p><strong>List stopped containers</strong></p>
 
 <p>We can also see stopped containers, with the <code class="highlighter-rouge">-a (--all)</code> option.</p>
-
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps -a
-  CONTAINER ID  IMAGE             ...  CREATED      STATUS
-  068cc994ffd0  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
-  57ad9bdfc06b  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
-  47d677dcfba4  hcscompany/clock  ...  23 min. ago  Exited (137) 3 min. ago
-  5c1dfd4d81f1  hcscompany/clock  ...  40 min. ago  Exited (0) 40 min. ago
-  b13c164401fb  ubuntu            ...  55 min. ago  Exited (130) 53 min. ago
+    CONTAINER ID  IMAGE           ...  CREATED      STATUS
+    068cc994ffd0  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
+    57ad9bdfc06b  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
+    47d677dcfba4  hcscompany/clock  ...  23 min. ago  Exited (137) 3 min. ago
+    5c1dfd4d81f1  hcscompany/clock  ...  40 min. ago  Exited (0) 40 min. ago
+    b13c164401fb  ubuntu          ...  55 min. ago  Exited (130) 53 min. ago
 </code></pre>
 </div>
 </div>
@@ -1391,7 +1392,9 @@ Status: Downloaded newer image for debian:jessie
 
 <p>First, we will do it manually with docker commit.</p>
 
-<p>Then, in an upcoming lab, we will use a Dockerfile and docker build.</p>
+<p>Then, in an upcoming chapter, we will use a Dockerfile and docker build.</p>
+
+<p>Building from a base</p>
 
 <p>Our base will be the ubuntu image.</p>
 
@@ -1401,13 +1404,14 @@ Status: Downloaded newer image for debian:jessie
 
 <p>Start an Ubuntu container:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it ubuntu
- root@&lt;yourContainerId&gt;:\#
+ root@b7b80a21718c:\#
 </code></pre>
 </div>
-<p>Run the command apt-get update to refresh the list of packages available to install.</p>
+<p>Where your <ContainerID> is different, than showed in the example.
+Run the command apt-get update to refresh the list of packages available to install.</ContainerID></p>
 
 <p>Then run the command apt-get install figlet to install the program we are interested in.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> root@&lt;yourContainerId&gt;:\# apt-get update &amp;&amp; apt-get install figlet
+<div class="highlighter-rouge"><pre class="highlight"><code> root@b7b80a21718c:\# apt-get update &amp;&amp; apt-get install figlet
 
  ...
  
@@ -1424,9 +1428,9 @@ root@b7b80a21718c:/#
 
 <p><strong>Type</strong> <code class="highlighter-rouge">exit</code> at the container prompt to leave the interactive session.</p>
 
-<p>Now let’s run <code class="highlighter-rouge">docker diff</code> to see the difference between the base image and our container, in our case <yourContainerID> is b7b80a21718c, see prompt of our container `root@b7b80a21718c`</yourContainerID></p>
+<p>Now let’s run <code class="highlighter-rouge">docker diff</code> to see the difference between the base image and our container, in our case <ContainerID> is b7b80a21718c</ContainerID></p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker diff &lt;yourContainerId&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker diff &lt;ContainerID&gt;
 C /etc
 C /etc/alternatives
 A /etc/alternatives/figlet
@@ -1437,29 +1441,6 @@ C /tmp
  ...
 </code></pre>
 </div>
-
-<table>
-  <thead>
-    <tr>
-      <th>Symbol</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>A</td>
-      <td>A file or directory was added</td>
-    </tr>
-    <tr>
-      <td>D</td>
-      <td>A file or directory was deleted</td>
-    </tr>
-    <tr>
-      <td>C</td>
-      <td>A file or directory was changed</td>
-    </tr>
-  </tbody>
-</table>
 
 <p>Docker tracks filesystem changes, as explained before:</p>
 
@@ -1485,14 +1466,14 @@ C /tmp
 <h4 id="step-3-commit-and-run-your-image">Step 3: Commit and run your image</h4>
 
 <p>The docker commit command will create a new layer with those changes, and a new image using this new layer.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker commit &lt;yourContainerId&gt; 
- sha256:&lt;newImageId&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker commit &lt;ContainerID&gt; 
+ sha256:&lt;newImageID&gt;
 </code></pre>
 </div>
 <p>The output of the docker commit command will be the ID for your newly created image.</p>
 
 <p>We can run this image:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it &lt;newImageId&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker run -it &lt;newImageID&gt;
  root@fcfb62f0bfde:/# figlet hello
      _          _ _
     | |__   ___| | | ___
@@ -1509,11 +1490,7 @@ C /tmp
 <h4 id="step-4-tagging-images">Step 4: Tagging images</h4>
 
 <p>Referring to an image by its ID is not convenient. Let’s tag it instead. We can use the tag command:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker tag &lt;newImageId&gt; figlet
-</code></pre>
-</div>
-<p>But we can also specify the tag as an extra argument to commit:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker commit &lt;yourContainerId&gt; figlet
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker tag &lt;newImageID&gt; figlet
 </code></pre>
 </div>
 <p>And then run it using its tag:</p>
@@ -2170,7 +2147,7 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
 
 <p>Let’s first create a new directory for examle <code class="highlighter-rouge">hello</code> and than download this file in there.</p>
 
-<p>(hint: <code class="highlighter-rouge">wget hcs-company.github.io/docker/labs/hello.c</code>)</p>
+<p>(hint: <code class="highlighter-rouge">wget hcs-company.github.io/docker/hello.c</code>)</p>
 
 <hr />
 
@@ -2284,7 +2261,7 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
 
 <h4 id="objectives">Objectives</h4>
 
-<p>You are already familiar with one command, <code class="highlighter-rouge">docker images</code>. You can also remove images, tag and untag them. Also we learn how to push and pull a image to a local registry.</p>
+<p>You are already familiar with one command, <code class="highlighter-rouge">docker images</code>. You can also remove images, tag and untag them.</p>
 
 <hr />
 
@@ -2341,23 +2318,20 @@ Deleted: sha256:ed08aaa4b5b884fd1270c3171709063a941bb0cf2f9e8201fc5166be3e406b1e
 
 <p><code class="highlighter-rouge">docker tag</code> helps us to tag images.</p>
 
-<p>We have a lot of versions of <code class="highlighter-rouge">figlet</code> built, but latest still points to the old <code class="highlighter-rouge">v2</code>.</p>
+<p>We have a lot of versions of <code class="highlighter-rouge">figlet</code> built, but latest still points to the old <code class="highlighter-rouge">v1</code>.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker images | grep figlet
 figlet                                             v2                  bbc0e5eb5777        2 days ago          170 MB
 figlet                                             v3                  bbc0e5eb5777        2 days ago          170 MB
 figlet                                             latest              b7fa8e20196b        2 days ago          170 MB
+figlet                                             v1                  b7fa8e20196b        2 days ago          170 MB
 </code></pre>
 </div>
 
 <p>Let’s change that by re-tagging <code class="highlighter-rouge">latest</code> to <code class="highlighter-rouge">v4</code>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker tag figlet:v4 figlet:latest
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker tag figlet:latest figlet:v4
 $ docker images | grep figlet
-figlet                                             v2                  bbc0e5eb5777        2 days ago          170 MB
-figlet                                             v3                  bbc0e5eb5777        2 days ago          170 MB
-figlet                                             latest              b7fa8e20196b        2 days ago          170 MB
-figlet                                             v4                  b7fa8e20196b        2 days ago          170 MB
 
 </code></pre>
 </div>
@@ -2368,19 +2342,8 @@ figlet                                             v4                  b7fa8e201
 
 <h4 id="step-4-publishing-images-to-a-local-registry">Step 4: Publishing images to a local registry</h4>
 
-<p>A registry is a stateless, highly scalable server side application that stores and lets you distribute Docker images. You can use a public registry or a local registry.</p>
-
-<p>Docker expects all registries to run on HTTPS. But for this lab we will run a version on HTTP. The Docker Engine needs to be explicitly setup to use HTTP for the insecure registry.</p>
-
-<p>In Docker for Mac, the Preferences menu lets you set the address for an insecure registry under the Daemon panel:</p>
-
-<p><img src="img/docker_osx_insecure_registry.png" alt="docker-settings-mac" /></p>
-
-<p>In Docker for Windows, the Settings menu lets you set the address for an insecure registry under the Daemon panel:</p>
-
-<p><img src="img/docker_windows_insecure_registry.png" alt="docker-settings-windows" /></p>
-
-<p>Let us spin now up a <strong>local</strong> registry:</p>
+<p>Images are distributed with a special service - <code class="highlighter-rouge">docker registry</code>.
+Let us spin up a local registry:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker run -p 5000:5000 --name registry -d registry:2
 </code></pre>
@@ -2390,36 +2353,33 @@ figlet                                             v4                  b7fa8e201
 
 <p>To instruct where we want to publish, we need to append registry address to repository name:</p>
 
-<p>First tag the figlet images:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker tag figlet:v4 127.0.0.1:5000/figlet:v4
+$ docker push 127.0.0.1:5000/figlet:v4
 </code></pre>
 </div>
-<p>After that push the images to the local registry:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker push 127.0.0.1:5000/figlet:v4
-The push refers to a repository [127.0.0.1:5000/figlet]
-78171efc0c5e: Pushed
-5154177609a7: Pushed
-33f1a94ed7fc: Pushed
-b27287a6dbce: Pushed
-47c2386f248c: Pushed
-2be95f0d8a0c: Pushed
-2df9b8def18a: Pushed
-v4: digest: sha256:dd02511304a21786165baead16b0f140d573a693e925215b99254585d4931898 size: 1779
-</code></pre>
-</div>
+
+<p><code class="highlighter-rouge">docker push</code> pushed the image to our “remote” registry.</p>
+
 <hr />
 
-<h4 id="step-5-remove-figletv4-image">Step 5: Remove figlet:v4 image</h4>
+<h4 id="step-5-stop-all-dockers-containers-and-images">Step 5: Stop all dockers containers and images</h4>
 
-<p>Enter the following commands to clean up figlet version 4:</p>
+<p>Enter the following commands to clean up:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker rmi 127.0.0.1:5000/figlet:v4
+<div class="highlighter-rouge"><pre class="highlight"><code># Stop all docker containers
+$ docker stop $(ps docker -q -a | grep figlet)
+
+# Delete every Docker containers
+# Must be run first because images are attached to containers
+$ docker rm -f $(docker ps -a -q | grep figlet)
+
+# Delete every Docker image
+$ docker rmi -f $(docker images -q | grep figlet)
 </code></pre>
 </div>
-
 <p>See that the figlet images are removed.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images -q | grep figlet
 </code></pre>
 </div>
 
@@ -2429,20 +2389,20 @@ v4: digest: sha256:dd02511304a21786165baead16b0f140d573a693e925215b99254585d4931
 
 <p>We can now download the image using the <code class="highlighter-rouge">docker pull</code> command:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker pull 127.0.0.1:5000/figlet:v4
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker pull 127.0.0.1:5000/figlet
 v4: Pulling from figlet
 Digest: sha256:c472a7ec8ab2b0db8d0839043b24dbda75ca6fa8816cfb6a58e7aaf3714a1423
 Status: Image is up to date for 127.0.0.1:5000/figlet
 </code></pre>
 </div>
 
-<p>and see that it is back again:</p>
+<p>and see that it is pulled.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker images
 </code></pre>
 </div>
 
-<p><strong>Well Done !!!!</strong></p>
+<p>Repeat <strong>Step 2</strong> if you want a clean envoirement.</p>
 
 </div>
                 </div>
