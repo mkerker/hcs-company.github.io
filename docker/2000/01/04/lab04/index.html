@@ -4,7 +4,7 @@
 
 <h4 id="objectives">Objectives</h4>
 
-<p>We have started containers in the foreground, and in the background. In this lab, we will see how to:</p>
+<p>We have started containers in the foreground and in the background. In this lab, we will see how to:</p>
 
 <ul>
   <li>
@@ -22,7 +22,7 @@
 
 <p>The distinction between foreground and background containers is arbitrary. From Docker’s point of view, all containers are the same.</p>
 
-<p>All containers run the same way, whether there is a client attached to them or not. It is always possible to detach from a container, and to reattach to a container.</p>
+<p>All containers run the same way, whether there is a client attached to them or not. It is always possible to detach from a container and to reattach to a container.</p>
 
 <p>Analogy: attaching to a container is like plugging a keyboard and screen to a physical server.</p>
 
@@ -84,7 +84,7 @@
 
 <h4 id="step-2-attaching-to-a-container">Step 2: Attaching to a container</h4>
 
-<p>You can attach to a container by <code class="highlighter-rouge">docker attach &lt;containerID&gt;</code></p>
+<p>You can attach to a container by <code class="highlighter-rouge">docker attach &lt;ID&gt;</code></p>
 
 <ul>
   <li>
@@ -141,15 +141,15 @@
 <p>When a container has exited, it is in stopped state.
 It can then be restarted with the start command:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker start &lt;yourContainerID&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker start &lt;ID&gt;
 </code></pre>
 </div>
 
 <p>The container will be restarted using the same options you launched it with.</p>
 
 <p>You can re-attach to it if you want to interact with it:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker attach &lt;yourContainerID&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker attach &lt;ID&gt;
 </code></pre>
 </div>
-<p>Use <code class="highlighter-rouge">docker ps -a</code> to identify the container ID of a previous hcscompany/clock container, and try those commands.</p>
+<p>Use <code class="highlighter-rouge">docker ps -a</code> to identify the container ID of a previous hcscompany/clock container and try those commands.</p>
 

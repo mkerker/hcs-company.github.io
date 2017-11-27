@@ -12,7 +12,7 @@
 
 <h4 id="step-1-defining-a-default-command">Step 1: Defining a default command</h4>
 
-<p>When people run our container, we want to greet them with a nice hello message, and using a custom font.</p>
+<p>When people run our container, we want to greet them with a nice hello message and using a custom font.</p>
 
 <p>For that, we will execute: <code class="highlighter-rouge">figlet -f script hello</code></p>
 
@@ -93,6 +93,8 @@
   </li>
 </ul>
 
+<p>Exit container with <code class="highlighter-rouge">exit</code>.</p>
+
 <hr />
 
 <h4 id="step-3-using-entrypoint">Step 3: Using ENTRYPOINT</h4>
@@ -129,7 +131,7 @@
     <p>The command line arguments are appended to those parameters.</p>
   </li>
   <li>
-    <p>Like <code class="highlighter-rouge">CMD</code>, <code class="highlighter-rouge">ENTRYPOINT</code> can appear anywhere, and replaces the previous value.</p>
+    <p>Like <code class="highlighter-rouge">CMD</code>, <code class="highlighter-rouge">ENTRYPOINT</code> can appear anywhere and replaces the previous value.</p>
   </li>
 </ul>
 
@@ -258,3 +260,4 @@
  root@b3ad7919177f:/#
 </code></pre>
 </div>
+<p>Exit again the container with <code class="highlighter-rouge">exit</code>.</p>

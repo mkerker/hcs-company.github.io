@@ -91,7 +91,7 @@
 
 <p>With <code class="highlighter-rouge">docker ps</code>, just like the UNIX ps command, lists running processes.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps
-  CONTAINER ID  IMAGE           ...  CREATED        STATUS        ...
+  CONTAINER ID  IMAGE             ...  CREATED        STATUS        ...
   47d677dcfba4  hcscompany/clock  ...  2 minutes ago  Up 2 minutes  ...
 </code></pre>
 </div>
@@ -228,15 +228,15 @@
 
 <p>The first one stops the container immediately, by using the KILL signal.</p>
 
-<p>The second one is more graceful. It sends a TERM signal, and after 10 seconds, if the container has not stopped, it sends KILL.</p>
+<p>The second one is more graceful. It sends a TERM signal and after 10 seconds, if the container has not stopped, it sends KILL.</p>
 
-<p>Reminder: the KILL signal cannot be intercepted, and will forcibly terminate the container.</p>
+<p>Reminder: the KILL signal cannot be intercepted and will forcibly terminate the container.</p>
 
 <p><em>Stopping our containers</em></p>
 
 <p>Let’s stop one of those containers:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker stop 47d6 
- 47d6
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker stop &lt;ID&gt; 
+   ...
 </code></pre>
 </div>
 <p>This will take 10 seconds:</p>
@@ -256,15 +256,12 @@
   </li>
 </ul>
 
-<p><em>Killing the remaining containers</em></p>
-
-<p>Let’s be less patient with the two other containers:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker kill 068 57ad 
- 068
- 57ad
+<p>Let’s be less patient with the two other containers, killing the remaining containers:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker kill &lt;ID&gt; &lt;ID&gt;
+   ...
 </code></pre>
 </div>
-<p>The stop and kill commands can take multiple container IDs.</p>
+<p>The stop and kill commands can take multiple container ID’s.</p>
 
 <p>Those containers will be terminated immediately (without the 10 seconds delay). Let’s check that our containers don’t show up anymore:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps
@@ -275,11 +272,11 @@
 
 <p>We can also see stopped containers, with the <code class="highlighter-rouge">-a (--all)</code> option.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps -a
-    CONTAINER ID  IMAGE           ...  CREATED      STATUS
+    CONTAINER ID  IMAGE             ...  CREATED      STATUS
     068cc994ffd0  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
     57ad9bdfc06b  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
     47d677dcfba4  hcscompany/clock  ...  23 min. ago  Exited (137) 3 min. ago
     5c1dfd4d81f1  hcscompany/clock  ...  40 min. ago  Exited (0) 40 min. ago
-    b13c164401fb  ubuntu          ...  55 min. ago  Exited (130) 53 min. ago
+    b13c164401fb  ubuntu            ...  55 min. ago  Exited (130) 53 min. ago
 </code></pre>
 </div>

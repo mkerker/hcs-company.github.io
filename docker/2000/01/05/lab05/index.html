@@ -35,10 +35,10 @@
     <p>Images are made of <em>layers</em>, conceptually stacked on top of each other.</p>
   </li>
   <li>
-    <p>Each layer can add, change, and remove files.</p>
+    <p>Each layer can add, change and remove files.</p>
   </li>
   <li>
-    <p>Images can share layers to optimize disk usage, transfer times, and memory use.</p>
+    <p>Images can share layers to optimize disk usage, transfer times and memory use.</p>
   </li>
   <li>
     <p>Example:</p>
@@ -168,7 +168,7 @@
 
 <p><em>1 - Root namespace</em></p>
 
-<p>The root namespace is for official images. They are put there by ., but they are generally authored and maintained by third parties.</p>
+<p>The root namespace is for official images.</p>
 
 <p>Those images include:</p>
 
@@ -180,7 +180,7 @@
     <p>Distro images to be used as bases for your builds, like ubuntu, fedora…</p>
   </li>
   <li>
-    <p>Ready-to-use components and services, like redis, postgresql… User namespace</p>
+    <p>Ready-to-use components and services, like redis, postgresql…</p>
   </li>
 </ul>
 
@@ -200,7 +200,7 @@
 
 <p>This namespace holds images which are not hosted on Docker Hub, but on third party registries.</p>
 
-<p>They contain the hostname (or IP address), and optionally the port, of the registry server.</p>
+<p>They contain the hostname (or IP address) and optionally the port, of the registry server.</p>
 
 <p>For example: <code class="highlighter-rouge">localhost:5000/wordpress</code></p>
 
@@ -229,6 +229,8 @@
 <p>You can use the Docker client to download (pull) or upload (push) images.</p>
 
 <p>To be more accurate: you can use the Docker client to tell a Docker server to push and pull images to and from a registry.</p>
+
+<p>We see more in Lab 10.</p>
 
 <hr />
 

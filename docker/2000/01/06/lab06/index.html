@@ -15,10 +15,10 @@
     <p>Create a container from a base image.</p>
   </li>
   <li>
-    <p>Install software manually in the container, and turn it into a new image.</p>
+    <p>Install software manually in the container and turn it into a new image.</p>
   </li>
   <li>
-    <p>Learn about new commands: docker commit, docker tag, and docker diff.</p>
+    <p>Learn about new commands: <code class="highlighter-rouge">docker commit</code>, <code class="highlighter-rouge">docker tag</code> and <code class="highlighter-rouge">docker diff</code>.</p>
   </li>
 </ul>
 
@@ -32,8 +32,6 @@
 
 <p>Then, in an upcoming chapter, we will use a Dockerfile and docker build.</p>
 
-<p>Building from a base</p>
-
 <p>Our base will be the ubuntu image.</p>
 
 <hr />
@@ -45,10 +43,9 @@
  root@b7b80a21718c:\#
 </code></pre>
 </div>
-<p>Where your <ContainerID> is different, than showed in the example.
-Run the command apt-get update to refresh the list of packages available to install.</ContainerID></p>
-
-<p>Then run the command apt-get install figlet to install the program we are interested in.</p>
+<p>Where your container ID is different, than showed in the example.
+Run the command apt-get update to refresh the list of packages available to install.
+Then run the command apt-get install figlet to install the program we are interested in. We can run it in one command.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> root@b7b80a21718c:\# apt-get update &amp;&amp; apt-get install figlet
 
  ...
@@ -64,11 +61,11 @@ root@b7b80a21718c:/#
 
 <h4 id="step-2-inspect-the-changes">Step 2: Inspect the changes</h4>
 
-<p><strong>Type</strong> <code class="highlighter-rouge">exit</code> at the container prompt to leave the interactive session.</p>
+<p>Type <code class="highlighter-rouge">exit</code> at the container prompt to leave the interactive session.</p>
 
-<p>Now let’s run <code class="highlighter-rouge">docker diff</code> to see the difference between the base image and our container, in our case <ContainerID> is b7b80a21718c</ContainerID></p>
+<p>Now let’s run <code class="highlighter-rouge">docker diff</code> to see the difference between the base image and our container, in our example the container ID is b7b80a21718c</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker diff &lt;ContainerID&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker diff &lt;ID&gt;
 C /etc
 C /etc/alternatives
 A /etc/alternatives/figlet
@@ -90,7 +87,7 @@ C /tmp
     <p>When we make changes, they happen in a copy of the image.</p>
   </li>
   <li>
-    <p>Docker can show the difference between the image, and its copy.</p>
+    <p>Docker can show the difference between the image and its copy.</p>
   </li>
   <li>
     <p>For performance, Docker uses copy-on-write systems.</p>
@@ -103,7 +100,7 @@ C /tmp
 
 <h4 id="step-3-commit-and-run-your-image">Step 3: Commit and run your image</h4>
 
-<p>The docker commit command will create a new layer with those changes, and a new image using this new layer.</p>
+<p>The docker commit command will create a new layer with those changes and a new image using this new layer.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker commit &lt;ContainerID&gt; 
  sha256:&lt;newImageID&gt;
 </code></pre>

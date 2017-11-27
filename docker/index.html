@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="HCS-Company">
 
-    <title>Let's play with Docker</title>
+    <title>Let's play with OpenShift and Docker</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -71,10 +71,10 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="intro-message">
-						<h1>Let's play with Docker</h1>
-						<h3>A Docker Workshop on 28 november at HCS-Company by M. Kerker</h3>
+						<h1>Let's play with OpenShift and Docker</h1>
+						<h3>A workshop on 28 november at Red Hat / HCS-Company by M. Kerker</h3>
 						<hr class="intro-divider">
-						<h3>In this instructor-led workshop on your own device, you will get a introductory crash course on the Docker platform and how to get started with containers. We will take you through hands-on exercises designed to help you learn the skills to run and build containers and how to distribute container images. So bring your own device with you and let’s play with Docker.</h3>
+						<h3>In this instructor-led workshop on your own device, you will get a introductory crash course on the OpenShift and Docker platform and how to get started with containers. We will take you through hands-on exercises designed to help you learn the skills to run and build containers and how to distribute container images. So bring your own device with you and let’s play with Docker.</h3>
 						<hr class="intro-divider">
 					</div>
 				</div>
@@ -162,7 +162,7 @@
   <li><a href="https://download.docker.com/mac/stable/Docker.dmg">Mac OS Yosemite 10.10.3 or above</a></li>
 </ul>
 
-<p>For previous OS versions use an online playground: <a href="http://labs.play-with-docker.com/">playground 1</a> or <a href="https://www.katacoda.com/courses/docker/playground#">playground 2</a></p>
+<p>For previous OS versions use an online playground: <a href="http://labs.play-with-docker.com/">playground</a>. You must make a DockerId to have a Docker playground.</p>
 
 <hr />
 
@@ -170,13 +170,13 @@
 
 <p>Double-click on <code class="highlighter-rouge">Docker.dmg</code> for Mac and <code class="highlighter-rouge">Docker for Windows Installer.exe</code> for Windows to start the install process.</p>
 
-<p>When the installation finishes, Docker starts automatically. On the Mac a whale appears in the top status bar or for Windows the whale appears in the notification area and indicates that Docker is running, and accessible from a terminal.</p>
+<p>When the installation finishes, Docker starts automatically. On the Mac a whale appears in the top status bar or for Windows the whale appears in the notification area and indicates that Docker is running and accessible from a terminal.</p>
 
 <hr />
 
 <h4 id="step-3-run-it">Step 3: Run it</h4>
 
-<p>Open a command-line terminal -<em>for Windows try PowerShell or install <a href="https://cygwin.com/install.html">Cygwin</a></em>-, and try out some Docker commands.</p>
+<p>Open a command-line terminal -<em>for Windows try PowerShell or install <a href="https://cygwin.com/install.html">Cygwin</a></em>- and try out some Docker commands.</p>
 
 <ul>
   <li>Run <code class="highlighter-rouge">docker version</code> to check that you have the latest release installed.</li>
@@ -227,7 +227,7 @@ To generate this message, Docker took the following steps:
 To try something more ambitious, you can run an Ubuntu container with:
  $ docker run -it ubuntu bash
 
-Share images, automate workflows, and more with a free Docker ID:
+Share images, automate workflows and more with a free Docker ID:
  https://cloud.docker.com/
 
 For more examples and ideas, visit:
@@ -434,7 +434,7 @@ update-alternatives: using /usr/bin/figlet-figlet to provide /usr/bin/figlet (fi
   </li>
 </ul>
 
-<p>What if we start a new container, and try to run figlet again?</p>
+<p>What if we start a new container and try to run figlet again?</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker run -it ubuntu 
 root@b13c164401fb:/# figlet 
 bash: figlet: command not found
@@ -445,11 +445,17 @@ bash: figlet: command not found
     <p>We started a <em>brand new container</em>.</p>
   </li>
   <li>
-    <p>The basic Ubuntu image was used, and figlet is not here. This is called “Stateless” the state is not kept when the container is not there anymore.</p>
+    <p>The basic Ubuntu image was used and figlet is not here. This is called “Stateless” the state is not kept when the container is not there anymore.</p>
   </li>
 </ul>
 
-<p>We will see in the next chapters how to bake a custom image with figlet.</p>
+<p>Exit the shell again.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> root@04c0bb0a6c07:/# exit
+</code></pre>
+</div>
+
+<p>We will see in the next lab how to bake a custom image with figlet.</p>
 </div>
                 </div>
             </div>
@@ -566,7 +572,7 @@ bash: figlet: command not found
 
 <p>With <code class="highlighter-rouge">docker ps</code>, just like the UNIX ps command, lists running processes.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps
-  CONTAINER ID  IMAGE           ...  CREATED        STATUS        ...
+  CONTAINER ID  IMAGE             ...  CREATED        STATUS        ...
   47d677dcfba4  hcscompany/clock  ...  2 minutes ago  Up 2 minutes  ...
 </code></pre>
 </div>
@@ -703,15 +709,15 @@ bash: figlet: command not found
 
 <p>The first one stops the container immediately, by using the KILL signal.</p>
 
-<p>The second one is more graceful. It sends a TERM signal, and after 10 seconds, if the container has not stopped, it sends KILL.</p>
+<p>The second one is more graceful. It sends a TERM signal and after 10 seconds, if the container has not stopped, it sends KILL.</p>
 
-<p>Reminder: the KILL signal cannot be intercepted, and will forcibly terminate the container.</p>
+<p>Reminder: the KILL signal cannot be intercepted and will forcibly terminate the container.</p>
 
 <p><em>Stopping our containers</em></p>
 
 <p>Let’s stop one of those containers:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker stop 47d6 
- 47d6
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker stop &lt;ID&gt; 
+   ...
 </code></pre>
 </div>
 <p>This will take 10 seconds:</p>
@@ -731,15 +737,12 @@ bash: figlet: command not found
   </li>
 </ul>
 
-<p><em>Killing the remaining containers</em></p>
-
-<p>Let’s be less patient with the two other containers:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker kill 068 57ad 
- 068
- 57ad
+<p>Let’s be less patient with the two other containers, killing the remaining containers:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker kill &lt;ID&gt; &lt;ID&gt;
+   ...
 </code></pre>
 </div>
-<p>The stop and kill commands can take multiple container IDs.</p>
+<p>The stop and kill commands can take multiple container ID’s.</p>
 
 <p>Those containers will be terminated immediately (without the 10 seconds delay). Let’s check that our containers don’t show up anymore:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker ps
@@ -750,12 +753,12 @@ bash: figlet: command not found
 
 <p>We can also see stopped containers, with the <code class="highlighter-rouge">-a (--all)</code> option.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker ps -a
-    CONTAINER ID  IMAGE           ...  CREATED      STATUS
+    CONTAINER ID  IMAGE             ...  CREATED      STATUS
     068cc994ffd0  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
     57ad9bdfc06b  hcscompany/clock  ...  21 min. ago  Exited (137) 3 min. ago
     47d677dcfba4  hcscompany/clock  ...  23 min. ago  Exited (137) 3 min. ago
     5c1dfd4d81f1  hcscompany/clock  ...  40 min. ago  Exited (0) 40 min. ago
-    b13c164401fb  ubuntu          ...  55 min. ago  Exited (130) 53 min. ago
+    b13c164401fb  ubuntu            ...  55 min. ago  Exited (130) 53 min. ago
 </code></pre>
 </div>
 </div>
@@ -788,7 +791,7 @@ bash: figlet: command not found
 
 <h4 id="objectives">Objectives</h4>
 
-<p>We have started containers in the foreground, and in the background. In this lab, we will see how to:</p>
+<p>We have started containers in the foreground and in the background. In this lab, we will see how to:</p>
 
 <ul>
   <li>
@@ -806,7 +809,7 @@ bash: figlet: command not found
 
 <p>The distinction between foreground and background containers is arbitrary. From Docker’s point of view, all containers are the same.</p>
 
-<p>All containers run the same way, whether there is a client attached to them or not. It is always possible to detach from a container, and to reattach to a container.</p>
+<p>All containers run the same way, whether there is a client attached to them or not. It is always possible to detach from a container and to reattach to a container.</p>
 
 <p>Analogy: attaching to a container is like plugging a keyboard and screen to a physical server.</p>
 
@@ -868,7 +871,7 @@ bash: figlet: command not found
 
 <h4 id="step-2-attaching-to-a-container">Step 2: Attaching to a container</h4>
 
-<p>You can attach to a container by <code class="highlighter-rouge">docker attach &lt;containerID&gt;</code></p>
+<p>You can attach to a container by <code class="highlighter-rouge">docker attach &lt;ID&gt;</code></p>
 
 <ul>
   <li>
@@ -925,17 +928,17 @@ bash: figlet: command not found
 <p>When a container has exited, it is in stopped state.
 It can then be restarted with the start command:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker start &lt;yourContainerID&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker start &lt;ID&gt;
 </code></pre>
 </div>
 
 <p>The container will be restarted using the same options you launched it with.</p>
 
 <p>You can re-attach to it if you want to interact with it:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker attach &lt;yourContainerID&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code> $ docker attach &lt;ID&gt;
 </code></pre>
 </div>
-<p>Use <code class="highlighter-rouge">docker ps -a</code> to identify the container ID of a previous hcscompany/clock container, and try those commands.</p>
+<p>Use <code class="highlighter-rouge">docker ps -a</code> to identify the container ID of a previous hcscompany/clock container and try those commands.</p>
 
 </div>
                 </div>
@@ -997,10 +1000,10 @@ It can then be restarted with the start command:</p>
     <p>Images are made of <em>layers</em>, conceptually stacked on top of each other.</p>
   </li>
   <li>
-    <p>Each layer can add, change, and remove files.</p>
+    <p>Each layer can add, change and remove files.</p>
   </li>
   <li>
-    <p>Images can share layers to optimize disk usage, transfer times, and memory use.</p>
+    <p>Images can share layers to optimize disk usage, transfer times and memory use.</p>
   </li>
   <li>
     <p>Example:</p>
@@ -1130,7 +1133,7 @@ It can then be restarted with the start command:</p>
 
 <p><em>1 - Root namespace</em></p>
 
-<p>The root namespace is for official images. They are put there by ., but they are generally authored and maintained by third parties.</p>
+<p>The root namespace is for official images.</p>
 
 <p>Those images include:</p>
 
@@ -1142,7 +1145,7 @@ It can then be restarted with the start command:</p>
     <p>Distro images to be used as bases for your builds, like ubuntu, fedora…</p>
   </li>
   <li>
-    <p>Ready-to-use components and services, like redis, postgresql… User namespace</p>
+    <p>Ready-to-use components and services, like redis, postgresql…</p>
   </li>
 </ul>
 
@@ -1162,7 +1165,7 @@ It can then be restarted with the start command:</p>
 
 <p>This namespace holds images which are not hosted on Docker Hub, but on third party registries.</p>
 
-<p>They contain the hostname (or IP address), and optionally the port, of the registry server.</p>
+<p>They contain the hostname (or IP address) and optionally the port, of the registry server.</p>
 
 <p>For example: <code class="highlighter-rouge">localhost:5000/wordpress</code></p>
 
@@ -1191,6 +1194,8 @@ It can then be restarted with the start command:</p>
 <p>You can use the Docker client to download (pull) or upload (push) images.</p>
 
 <p>To be more accurate: you can use the Docker client to tell a Docker server to push and pull images to and from a registry.</p>
+
+<p>We see more in Lab 10.</p>
 
 <hr />
 
@@ -1377,10 +1382,10 @@ Status: Downloaded newer image for debian:jessie
     <p>Create a container from a base image.</p>
   </li>
   <li>
-    <p>Install software manually in the container, and turn it into a new image.</p>
+    <p>Install software manually in the container and turn it into a new image.</p>
   </li>
   <li>
-    <p>Learn about new commands: docker commit, docker tag, and docker diff.</p>
+    <p>Learn about new commands: <code class="highlighter-rouge">docker commit</code>, <code class="highlighter-rouge">docker tag</code> and <code class="highlighter-rouge">docker diff</code>.</p>
   </li>
 </ul>
 
@@ -1394,8 +1399,6 @@ Status: Downloaded newer image for debian:jessie
 
 <p>Then, in an upcoming chapter, we will use a Dockerfile and docker build.</p>
 
-<p>Building from a base</p>
-
 <p>Our base will be the ubuntu image.</p>
 
 <hr />
@@ -1407,10 +1410,9 @@ Status: Downloaded newer image for debian:jessie
  root@b7b80a21718c:\#
 </code></pre>
 </div>
-<p>Where your <ContainerID> is different, than showed in the example.
-Run the command apt-get update to refresh the list of packages available to install.</ContainerID></p>
-
-<p>Then run the command apt-get install figlet to install the program we are interested in.</p>
+<p>Where your container ID is different, than showed in the example.
+Run the command apt-get update to refresh the list of packages available to install.
+Then run the command apt-get install figlet to install the program we are interested in. We can run it in one command.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> root@b7b80a21718c:\# apt-get update &amp;&amp; apt-get install figlet
 
  ...
@@ -1426,11 +1428,11 @@ root@b7b80a21718c:/#
 
 <h4 id="step-2-inspect-the-changes">Step 2: Inspect the changes</h4>
 
-<p><strong>Type</strong> <code class="highlighter-rouge">exit</code> at the container prompt to leave the interactive session.</p>
+<p>Type <code class="highlighter-rouge">exit</code> at the container prompt to leave the interactive session.</p>
 
-<p>Now let’s run <code class="highlighter-rouge">docker diff</code> to see the difference between the base image and our container, in our case <ContainerID> is b7b80a21718c</ContainerID></p>
+<p>Now let’s run <code class="highlighter-rouge">docker diff</code> to see the difference between the base image and our container, in our example the container ID is b7b80a21718c</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker diff &lt;ContainerID&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker diff &lt;ID&gt;
 C /etc
 C /etc/alternatives
 A /etc/alternatives/figlet
@@ -1452,7 +1454,7 @@ C /tmp
     <p>When we make changes, they happen in a copy of the image.</p>
   </li>
   <li>
-    <p>Docker can show the difference between the image, and its copy.</p>
+    <p>Docker can show the difference between the image and its copy.</p>
   </li>
   <li>
     <p>For performance, Docker uses copy-on-write systems.</p>
@@ -1465,7 +1467,7 @@ C /tmp
 
 <h4 id="step-3-commit-and-run-your-image">Step 3: Commit and run your image</h4>
 
-<p>The docker commit command will create a new layer with those changes, and a new image using this new layer.</p>
+<p>The docker commit command will create a new layer with those changes and a new image using this new layer.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> $ docker commit &lt;ContainerID&gt; 
  sha256:&lt;newImageID&gt;
 </code></pre>
@@ -1747,7 +1749,7 @@ Removing intermediate container 840cb3533193
 
 <p>The <code class="highlighter-rouge">history</code> command lists all the layers composing an image.</p>
 
-<p>For each layer, it shows its creation time, size, and creation command.</p>
+<p>For each layer, it shows its creation time, size and creation command.</p>
 
 <p>When an image was built with a Dockerfile, each layer corresponds to a line of the Dockerfile.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker history figlet:v1
@@ -1854,7 +1856,7 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
 
 <h4 id="step-1-defining-a-default-command">Step 1: Defining a default command</h4>
 
-<p>When people run our container, we want to greet them with a nice hello message, and using a custom font.</p>
+<p>When people run our container, we want to greet them with a nice hello message and using a custom font.</p>
 
 <p>For that, we will execute: <code class="highlighter-rouge">figlet -f script hello</code></p>
 
@@ -1935,6 +1937,8 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
   </li>
 </ul>
 
+<p>Exit container with <code class="highlighter-rouge">exit</code>.</p>
+
 <hr />
 
 <h4 id="step-3-using-entrypoint">Step 3: Using ENTRYPOINT</h4>
@@ -1971,7 +1975,7 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
     <p>The command line arguments are appended to those parameters.</p>
   </li>
   <li>
-    <p>Like <code class="highlighter-rouge">CMD</code>, <code class="highlighter-rouge">ENTRYPOINT</code> can appear anywhere, and replaces the previous value.</p>
+    <p>Like <code class="highlighter-rouge">CMD</code>, <code class="highlighter-rouge">ENTRYPOINT</code> can appear anywhere and replaces the previous value.</p>
   </li>
 </ul>
 
@@ -2100,6 +2104,7 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
  root@b3ad7919177f:/#
 </code></pre>
 </div>
+<p>Exit again the container with <code class="highlighter-rouge">exit</code>.</p>
 </div>
                 </div>
             </div>
@@ -2145,9 +2150,19 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
 </code></pre>
 </div>
 
-<p>Let’s first create a new directory for examle <code class="highlighter-rouge">hello</code> and than download this file in there.</p>
+<p>Let’s first create a new directory <code class="highlighter-rouge">hello</code>.</p>
 
-<p>(hint: <code class="highlighter-rouge">wget hcs-company.github.io/docker/hello.c</code>)</p>
+<p>Our new Dockerfile must agian be in a <strong>new, empty directory</strong>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ cd ..
+$ mkdir hello
+</code></pre>
+</div>
+<p>Create <code class="highlighter-rouge">hello.c</code> inside this directory.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ cd hello
+ $ vi hello.c
+</code></pre>
+</div>
 
 <hr />
 
@@ -2158,6 +2173,8 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
 <p>When installing it, don’t forget to specify the <code class="highlighter-rouge">-y</code> flag, otherwise the build will fail (since the build cannot be interactive).</p>
 
 <p>Then we will use <code class="highlighter-rouge">COPY</code> to place the source file into the container.</p>
+
+<p>Create a new Dockerfile with <code class="highlighter-rouge">vi Dockerfile</code>:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> FROM ubuntu
 
  RUN apt-get update
@@ -2267,8 +2284,10 @@ ebcd9d4fca80        6 days ago          /bin/sh -c #(nop)  CMD ["/bin/bash"]    
 
 <h4 id="step-1-build-a-new-version">Step 1: Build a new version</h4>
 
-<p>First let build the new figlet v3 from Dockerfile, so that we have more versions.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code> $ docker build -t figlet:v3 .
+<p>First let build the new figlet v3 from Dockerfile in the <code class="highlighter-rouge">myimage</code> directory, so that we have more versions.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code> $ cd ..
+ $ cd myimage
+ $ docker build -t figlet:v3 .
 </code></pre>
 </div>
 
@@ -2295,7 +2314,7 @@ CONTAINER ID        IMAGE               COMMAND                    CREATED      
 </code></pre>
 </div>
 
-<p>We can now delete the container:</p>
+<p>We can now delete the container, enter off course you own ID:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker rm 74ed5559950b
 74ed5559950b

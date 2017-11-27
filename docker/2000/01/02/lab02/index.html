@@ -171,7 +171,7 @@ update-alternatives: using /usr/bin/figlet-figlet to provide /usr/bin/figlet (fi
   </li>
 </ul>
 
-<p>What if we start a new container, and try to run figlet again?</p>
+<p>What if we start a new container and try to run figlet again?</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ docker run -it ubuntu 
 root@b13c164401fb:/# figlet 
 bash: figlet: command not found
@@ -182,8 +182,14 @@ bash: figlet: command not found
     <p>We started a <em>brand new container</em>.</p>
   </li>
   <li>
-    <p>The basic Ubuntu image was used, and figlet is not here. This is called “Stateless” the state is not kept when the container is not there anymore.</p>
+    <p>The basic Ubuntu image was used and figlet is not here. This is called “Stateless” the state is not kept when the container is not there anymore.</p>
   </li>
 </ul>
 
-<p>We will see in the next chapters how to bake a custom image with figlet.</p>
+<p>Exit the shell again.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> root@04c0bb0a6c07:/# exit
+</code></pre>
+</div>
+
+<p>We will see in the next lab how to bake a custom image with figlet.</p>
