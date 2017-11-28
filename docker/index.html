@@ -2386,19 +2386,19 @@ $ docker push 127.0.0.1:5000/figlet:v4
 <p>Enter the following commands to clean up:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code># Stop all docker containers
-$ docker stop $(ps docker -q -a | grep figlet)
+$ docker stop $(docker ps -q -a)
 
 # Delete every Docker containers
 # Must be run first because images are attached to containers
-$ docker rm -f $(docker ps -a -q | grep figlet)
+$ docker rm -f $(docker ps -a -q)
 
 # Delete every Docker image
-$ docker rmi -f $(docker images -q | grep figlet)
+$ docker rmi -f $(docker images -q)
 </code></pre>
 </div>
 <p>See that the figlet images are removed.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images -q | grep figlet
+<div class="highlighter-rouge"><pre class="highlight"><code>$ docker images -q
 </code></pre>
 </div>
 
